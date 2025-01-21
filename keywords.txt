@@ -1,0 +1,47 @@
+#######################################
+<<<<<<< HEAD
+# Syntax Highlighting for IOTBOT Library
+#######################################
+
+# Class name
+IOTBOT  KEYWORD1
+
+# Methods
+begin                KEYWORD2
+playIntro            KEYWORD2
+testJoystick         KEYWORD2
+testEncoder          KEYWORD2
+testPotentiometer    KEYWORD2
+testButtons          KEYWORD2
+testBuzzer           KEYWORD2
+testRelay            KEYWORD2
+testLDR              KEYWORD2
+controlServo         KEYWORD2
+writeLCD             KEYWORD2
+playTone             KEYWORD2
+
+# New methods
+analogReadPin        KEYWORD2
+analogWritePin       KEYWORD2
+digitalReadPin       KEYWORD2
+digitalWritePin      KEYWORD2
+=======
+# Syntax Highlighting for CARBOT Library
+#######################################
+
+# Class name
+CARBOT                KEYWORD1
+
+# Methods
+begin                 KEYWORD2
+testCar               KEYWORD2
+moveForward           KEYWORD2
+moveBackward          KEYWORD2
+turnLeft              KEYWORD2
+turnRight             KEYWORD2
+stopCar               KEYWORD2
+playHorn              KEYWORD2
+controlLED            KEYWORD2
+writeLCD              KEYWORD2
+setServoAngle         KEYWORD2
+>>>>>>> d1aa8ccd8c680b8208fcab187ff2759fa5d93659
