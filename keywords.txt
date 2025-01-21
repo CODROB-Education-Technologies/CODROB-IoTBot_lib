@@ -25,23 +25,3 @@ analogReadPin        KEYWORD2
 analogWritePin       KEYWORD2
 digitalReadPin       KEYWORD2
 digitalWritePin      KEYWORD2
-=======
-# Syntax Highlighting for CARBOT Library
-#######################################
-
-# Class name
-CARBOT                KEYWORD1
-
-# Methods
-begin                 KEYWORD2
-testCar               KEYWORD2
-moveForward           KEYWORD2
-moveBackward          KEYWORD2
-turnLeft              KEYWORD2
-turnRight             KEYWORD2
-stopCar               KEYWORD2
-playHorn              KEYWORD2
-controlLED            KEYWORD2
-writeLCD              KEYWORD2
-setServoAngle         KEYWORD2
->>>>>>> d1aa8ccd8c680b8208fcab187ff2759fa5d93659
