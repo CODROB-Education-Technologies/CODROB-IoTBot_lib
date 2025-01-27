@@ -19,8 +19,6 @@ testLDR              KEYWORD2
 controlServo         KEYWORD2
 writeLCD             KEYWORD2
 playTone             KEYWORD2
-
-# New methods
 analogReadPin        KEYWORD2
 analogWritePin       KEYWORD2
 digitalReadPin       KEYWORD2
