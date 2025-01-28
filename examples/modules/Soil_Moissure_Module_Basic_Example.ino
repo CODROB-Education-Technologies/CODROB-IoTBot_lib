@@ -2,6 +2,9 @@
 
 IOTBOT iotbot; // IoTBot nesnesi oluşturuluyor / Create IoTBot object
 
+#define SENSOR_PIN IO27 // Select sensor pin / Sensörün bağlı olduğu pini seçin.
+                        // IO25 - IO26 - IO27 - IO32 - IO33
+
 void setup()
 {
     iotbot.begin();             // IoTBot başlatılıyor / Initialize IoTBot
@@ -11,7 +14,7 @@ void setup()
 
 void loop()
 {
-    int soilMoisture = iotbot.moduleSoilMoistureRead(IO27); // Toprak nem değeri okunuyor / Read soil moisture value
+    int soilMoisture = iotbot.moduleSoilMoistureRead(SENSOR_PIN); // Toprak nem değeri okunuyor / Read soil moisture value
 
     iotbot.serialWrite("Toprak Nem Değeri / Soil Moisture Value: ");
     iotbot.serialWrite(soilMoisture); // Toprak nem değeri yazdırılıyor / Print soil moisture value

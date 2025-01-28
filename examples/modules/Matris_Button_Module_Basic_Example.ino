@@ -2,6 +2,9 @@
 
 IOTBOT iotbot;
 
+#define SENSOR_PIN IO27 // Select sensor pin / Sensörün bağlı olduğu pini seçin.
+                        // IO25 - IO26 - IO27 - IO32 - IO33
+
 void setup()
 {
     iotbot.begin();
@@ -13,7 +16,7 @@ void setup()
 
 void loop()
 {
-    int buttonNumber = iotbot.moduleMatrisButtonNumberRead(IO27); // Matris buton verisi / Matrix button value
+    int buttonNumber = iotbot.moduleMatrisButtonNumberRead(SENSOR_PIN); // Matris buton verisi / Matrix button value
     iotbot.lcdClear();
 
     if (buttonNumber > 0)

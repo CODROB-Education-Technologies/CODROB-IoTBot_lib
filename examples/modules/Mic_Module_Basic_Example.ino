@@ -2,6 +2,9 @@
 
 IOTBOT iotbot;
 
+#define SENSOR_PIN IO27 // Select sensor pin / Sensörün bağlı olduğu pini seçin.
+                        // IO25 - IO26 - IO27 - IO32 - IO33
+
 void setup()
 {
     iotbot.begin();
@@ -13,7 +16,7 @@ void setup()
 
 void loop()
 {
-    int micValue = iotbot.moduleMicRead(IO27); // Mikrofon sensör verisi / Microphone sensor value
+    int micValue = iotbot.moduleMicRead(SENSOR_PIN); // Mikrofon sensör verisi / Microphone sensor value
     iotbot.lcdClear();
     iotbot.lcdWriteMid("Mikrofon Degeri:", "", String(micValue).c_str(), "");
     delay(500); // Gecikme / Delay

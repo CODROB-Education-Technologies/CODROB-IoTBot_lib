@@ -9,7 +9,6 @@
 #include <DHT.h>
 #include <Stepper.h>
 #include <Adafruit_NeoPixel.h>
-// #include <IRremote.hpp>
 
 // Pins
 #define JOYSTICK_Y_PIN 34
@@ -20,6 +19,7 @@
 #define ENCODER_BUTTON_PIN 13
 #define B1_AND_B2_BUTTON_PIN 4
 #define RELAY_PIN 14
+#define BUZZER_PIN 12
 #define LDR_PIN 39
 #define POT_PIN 36
 #define B3_BUTTON_PIN 0
@@ -196,9 +196,10 @@ private:
   LiquidCrystal_I2C lcd;
   DHT *dhtSensor;    // Pointer to DHT sensor object
   Servo servoModule; // Create a Servo object for controlling the servo motor
-  int encoderCount;  // Stores the encoder's position
-  int lastStateA;    // Stores the last state of A pin
-  int lastStateB;    // Stores the last state of B pin
+  int currentAngle = 0;
+  int encoderCount; // Stores the encoder's position
+  int lastStateA;   // Stores the last state of A pin
+  int lastStateB;   // Stores the last state of B pin
   int counterBuzzer, counterLCD, counterLDR, counterRelay, counterPot, counterJoystick, counterButtons, counterEncoder = 0;
   void initializeDht(int pin, uint8_t type);
   Adafruit_NeoPixel *pixels; // NeoPixel object pointer

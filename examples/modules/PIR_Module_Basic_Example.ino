@@ -2,6 +2,9 @@
 
 IOTBOT iotbot;
 
+#define SENSOR_PIN IO27 // Select sensor pin / Sensörün bağlı olduğu pini seçin.
+                        // IO25 - IO26 - IO27 - IO32 - IO33
+
 void setup()
 {
     iotbot.begin();
@@ -13,7 +16,7 @@ void setup()
 
 void loop()
 {
-    int motionDetected = iotbot.moduleMotionRead(IO27); // PIR sensör verisi / PIR sensor value
+    int motionDetected = iotbot.moduleMotionRead(SENSOR_PIN); // PIR sensör verisi / PIR sensor value
     iotbot.lcdClear();
 
     if (motionDetected)
