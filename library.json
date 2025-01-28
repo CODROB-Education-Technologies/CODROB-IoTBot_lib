@@ -1,6 +1,6 @@
 {
   "name": "CODROB_IOTBOT",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Library for IOTBOT, an ESP32-based programmable device. Visit www.codrob.com.tr for more information.",
   "keywords": [
     "robotics",
@@ -43,39 +43,17 @@
     "espressif32"
   ],
   "examples": [
-    "examples/IOTBOT_basic_example"
+    "examples/main/IOTBOT_basic_example"
   ],
   "homepage": "https://github.com/CODROB-Education-Technologies/CODROB-IOTBOT_lib",
-  "dependencies": [
-    {
-      "name": "ESP32Servo",
-      "platforms": "espressif32",
-      "version": ">=3.0.6"
-    },
-    {
-      "name": "LiquidCrystal_I2C",
-      "platforms": "espressif32",
-      "version": ">=1.1.4"
-    },
-    {
-      "name": "Encoder",
-      "platforms": "espressif32",
-      "version": ">=1.4.2"
-    },
-    {
-      "name": "Adafruit NeoPixel",
-      "platforms": "espressif32",
-      "version": ">=1.10.6"
-    },
-    {
-      "name": "Adafruit Unified Sensor",
-      "platforms": "espressif32",
-      "version": ">=1.0.3"
-    },
-    {
-      "name": "DHT sensor library",
-      "platforms": "espressif32",
-      "version": ">=1.4.4"
-    }
-  ]
+  "dependencies": {
+    "ESP32Servo": ">=3.0.6",
+    "LiquidCrystal_I2C": ">=1.1.4",
+    "Encoder": ">=1.4.2",
+    "Adafruit NeoPixel": ">=1.10.6",
+    "Adafruit Unified Sensor": ">=1.0.3",
+    "DHT sensor library": ">=1.4.4",
+    "Stepper": ">=1.1.3"
+    //,"IRremote": ">=4.4.0"
+  }
 }

@@ -24,7 +24,7 @@ void IOTBOT::begin()
   lastStateB = digitalRead(ENCODER_B_PIN);
 
   // LCD begin
-  lcd.init();
+  lcd.begin();
   lcd.backlight();
   lcd.clear();
   tone(BUZZER_PIN, 750, 125); // 80 Hz'de 125 ms çal
@@ -313,7 +313,7 @@ void IOTBOT::ldrtest()
 
 /*********************************** RELAY ***********************************
  */
-void IOTBOT::relaySet(bool status)
+void IOTBOT::relayWrite(bool status)
 {
   digitalWrite(RELAY_PIN, status);
 }
@@ -420,7 +420,6 @@ void IOTBOT::joysticktest()
 
 /*********************************** BUTTONS ***********************************
  */
-
 int IOTBOT::button1Read()
 {
   int value = analogRead(B1_AND_B2_BUTTON_PIN);
@@ -517,7 +516,6 @@ void IOTBOT::buttonsAnalogtest()
 
 /*********************************** ENCODER ***********************************
  */
-
 int IOTBOT::encoderRead()
 {
   // Read current states of A and B pins
@@ -615,129 +613,518 @@ void IOTBOT::encodertest()
 
 /*********************************** DRIVER AND MOTORS ***********************************
  */
-void IOTBOT::moduleStepMotorMotion(bool rotation, int accelometer, int speed)
+/*********************************** Stepper Motor Motion ***********************************
+ * Controls the stepper motor.
+ * rotation: True for clockwise, false for counterclockwise.
+ * accelometer: Number of steps to move.
+ * speed: Speed of the stepper motor in RPM.
+ */
+void IOTBOT::moduleStepMotorMotion(int step, bool rotation, int accelometer, int speed)
 {
+  // Stepper motor object (shared across the library)
+  Stepper stepMotor(step, IO26, IO33, IO32, IO27); // 50 steps per revolution, pins 26, 33, 32, 27
+
+  stepMotor.setSpeed(speed); // Set the speed of the stepper motor
+
+  if (rotation)
+  {
+    stepMotor.step(accelometer); // Move forward (clockwise)
+  }
+  else
+  {
+    stepMotor.step(-accelometer); // Move backward (counterclockwise)
+  }
 }
 
+/*********************************** DC Motor Clockwise ***********************************
+ * Rotates the DC motor clockwise at the specified speed.
+ * speed: Motor speed (0 to 255 for PWM).
+ */
 void IOTBOT::moduleDCMotorGOClockWise(int speed)
 {
+  pinMode(IO26, OUTPUT); // Direction control pin
+  pinMode(IO27, OUTPUT); // PWM control pin
+
+  // Map speed from 0-100 to 0-255 for PWM
+  int pwmValue = map(speed, 0, 100, 0, 255);
+
+  digitalWrite(IO26, LOW);     // Set direction to clockwise
+  analogWrite(IO27, pwmValue); // Set motor speed using PWM
 }
 
+/*********************************** DC Motor Counter-Clockwise ***********************************
+ * Rotates the DC motor counterclockwise at the specified speed.
+ * speed: Motor speed (0 to 255 for PWM).
+ */
 void IOTBOT::moduleDCMotorGOCounterClockWise(int speed)
 {
+  pinMode(IO26, OUTPUT); // Direction control pin
+  pinMode(IO27, OUTPUT); // PWM control pin
+
+  // Map speed from 0-100 to 0-255 for PWM
+  int pwmValue = map(speed, 0, 100, 0, 255);
+
+  digitalWrite(IO26, pwmValue); // Set direction to counterclockwise
+  analogWrite(IO27, LOW);       // Set motor speed using PWM
 }
+
+/*********************************** DC Motor Stop ***********************************
+ * Stops the DC motor by setting PWM to 0.
+ */
 void IOTBOT::moduleDCMotorStop()
 {
+  pinMode(IO26, OUTPUT);
+  pinMode(IO27, OUTPUT);
+
+  digitalWrite(IO26, LOW);
+  digitalWrite(IO27, LOW);
 }
 
-void IOTBOT::moduleDCMotorBrake(int speed)
+/*********************************** DC Motor Brake ***********************************
+ * Brakes the DC motor using a hardware brake.
+ */
+void IOTBOT::moduleDCMotorBrake()
 {
+  pinMode(IO26, OUTPUT);
+  pinMode(IO27, OUTPUT);
+
+  digitalWrite(IO26, HIGH);
+  digitalWrite(IO27, HIGH);
 }
 
-/*********************************** Servo Motor Sensor ***********************************
+/*********************************** Servo Angle Control ***********************************
+ * Moves a servo to the specified angle with optional acceleration control.
+ * pin: The GPIO pin connected to the servo signal.
+ * angle: The target angle for the servo (0° to 180°).
+ * acceleration: The delay (in milliseconds) between incremental movements.
  */
 void IOTBOT::moduleServoGoAngle(int pin, int angle, int acceleration)
 {
-  servoModul.write(angle);
+  // Attach the servo to the specified pin if not already attached
+  if (!servoModule.attached())
+  {
+    servoModule.attach(pin, 500, 2500); // Attach servo with min and max pulse width
+  }
+
+  // Ensure angle is within valid bounds (0 to 180 degrees)
+  angle = constrain(angle, 0, 180);
+
+  // Get the current position of the servo
+  int currentAngle = servoModule.read(); // Read the current angle (0° to 180°)
+
+  // Determine movement direction (1 for increasing, -1 for decreasing)
+  int step = (angle > currentAngle) ? 1 : -1;
+
+  // Gradually move the servo to the target angle with acceleration
+  for (int pos = currentAngle; pos != angle; pos += step)
+  {
+    servoModule.write(pos); // Move servo to the next position
+    delay(acceleration);    // Delay for acceleration control
+  }
+
+  // Ensure the final angle is set correctly
+  servoModule.write(angle);
 }
 
-/*********************************** DHT Sensor ***********************************
+/*********************************** DHT Sensor Initialization ***********************************
+ * Configures the DHT sensor.
+ * This is automatically initialized when reading temperature or humidity.
  */
-int IOTBOT::moduleDhtTempRead(int pin)
+void IOTBOT::initializeDht(int pin, uint8_t type)
 {
+  if (!dhtSensor)
+  {
+    dhtSensor = new DHT(pin, type); // Create a new DHT object
+    dhtSensor->begin();             // Initialize the sensor
+  }
 }
 
-int IOTBOT::moduleDhtHumRead(int pin)
+int IOTBOT::moduleDhtTempRead(int pin) // Read Temperature
 {
+  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
+  float temp = dhtSensor->readTemperature();
+
+  if (isnan(temp)) // Check if reading failed
+    return -999;
+
+  return static_cast<int>(temp);
 }
 
-int IOTBOT::moduleDthFeelingTemp(int pin)
+int IOTBOT::moduleDhtHumRead(int pin) // Read Humidity
 {
+  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
+  float hum = dhtSensor->readHumidity();
+
+  if (isnan(hum)) // Check if reading failed
+    return -999;
+
+  return static_cast<int>(hum);
+}
+
+int IOTBOT::moduleDthFeelingTemp(int pin) // Calculate Heat Index (Feeling Temperature)
+{
+  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
+
+  float temp = dhtSensor->readTemperature();
+  float hum = dhtSensor->readHumidity();
+
+  if (isnan(temp) || isnan(hum)) // Check if readings failed
+    return -999;
+
+  float heatIndex = dhtSensor->computeHeatIndex(temp, hum, false); // Calculate heat index in Celsius
+  return static_cast<int>(heatIndex);
 }
 
 /*********************************** NTC Temp Sensor ***********************************
+ * Reads the NTC temperature sensor value and calculates the temperature in Celsius.
+ * pin: The analog pin where the NTC is connected.
  */
 float IOTBOT::moduleNtcTempRead(int pin)
 {
+  // NTC constants
+  const float R_NOMINAL = 10000.0;       // Nominal resistance at 25°C (10k ohms)
+  const float T_NOMINAL = 25.0;          // Nominal temperature (25°C)
+  const float B_COEFFICIENT = 3950.0;    // Beta coefficient of the thermistor
+  const float SERIES_RESISTOR = 10000.0; // Resistor value in series with the NTC
+
+  // Read the analog value from the pin
+  int analogValue = analogRead(pin);
+
+  // Convert the analog value to resistance
+  float resistance = SERIES_RESISTOR / ((4095.0 / analogValue) - 1.0);
+
+  // Calculate the temperature using the Steinhart-Hart equation
+  float steinhart = resistance / R_NOMINAL; // (R / R_NOMINAL)
+  steinhart = log(steinhart);               // ln(R/R_NOMINAL)
+  steinhart /= B_COEFFICIENT;               // 1/B * ln(R/R_NOMINAL)
+  steinhart += 1.0 / (T_NOMINAL + 273.15);  // + (1/T_NOMINAL)
+  steinhart = 1.0 / steinhart;              // Invert
+  steinhart -= 273.15;                      // Convert Kelvin to Celsius
+
+  return steinhart;
 }
 
 /*********************************** Magnetic Sensor ***********************************
  */
 int IOTBOT::moduleMagneticRead(int pin)
 {
+  return !digitalRead(pin);
 }
 
 /*********************************** Matris Button Sensor ***********************************
  */
-int IOTBOT::moduleMatrisButtonRead(int pin)
+int IOTBOT::moduleMatrisButtonAnalogRead(int pin)
 {
+  return analogRead(pin);
+}
+
+int IOTBOT::moduleMatrisButtonNumberRead(int pin)
+{
+  int value = analogRead(pin);
+  if (value > 4000)
+  {
+    return 1;
+  }
+  else if (value > 2350 && value < 2500)
+  {
+    return 2;
+  }
+  else if (value > 2210 && value < 2350)
+  {
+    return 3;
+  }
+  else if (value > 2150 && value < 2210)
+  {
+    return 4;
+  }
+  else if (value > 2000 && value < 2150)
+  {
+    return 5;
+  }
+  else
+  {
+    return 0;
+  }
 }
 
 /*********************************** Vibration Sensor ***********************************
  */
-int IOTBOT::moduleVibrationRead(int pin)
+int IOTBOT::moduleVibrationDigitalRead(int pin)
 {
+  return digitalRead(pin);
+}
+
+int IOTBOT::moduleVibrationAnalogRead(int pin)
+{
+  return analogRead(pin);
 }
 
 /*********************************** Ultrasonic Distance Sensor ***********************************
+ * Reads distance from the ultrasonic sensor using echo and trigger pins.
+ * Automatically adjusts for ESP32 and ESP8266 platforms.
+ * Returns 0 if the distance exceeds the maximum measurable range (400 cm).
  */
 int IOTBOT::moduleUltrasonicDistanceRead()
 {
+#if defined(ESP32)
+  const int TRIG_PIN = IO27;
+  const int ECHO_PIN = IO32;
+#else
+#error "Unsupported platform! Only ESP32 and ESP8266 are supported."
+#endif
+
+  // Maximum measurable distance for HC-SR04 (in centimeters)
+  const int MAX_DISTANCE = 400;
+
+  // Configure pins
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+  // Send a 10-microsecond pulse on the TRIG_PIN
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  // Measure the duration of the echo pulse
+  long duration = pulseIn(ECHO_PIN, HIGH, MAX_DISTANCE * 58); // Timeout for MAX_DISTANCE
+
+  // If no echo is received, return 0 (out of range)
+  if (duration == 0)
+  {
+    return 0; // Out of range or no object detected
+  }
+
+  // Calculate the distance in centimeters
+  int distance = duration * 0.034 / 2; // Sound speed: 0.034 cm/µs, divide by 2 for round trip
+
+  // If the calculated distance exceeds the maximum range, return 0
+  if (distance > MAX_DISTANCE)
+  {
+    return 000;
+  }
+
+  return distance; // Return the measured distance
 }
 
 /*********************************** Trafic Ligh Sensor ***********************************
  */
-int IOTBOT::moduleTraficLightRead()
+void IOTBOT::moduleTraficLightWrite(bool red, bool yellow, bool green)
 {
+#if defined(ESP32)
+  const int RED_PIN = IO32;
+  const int YELLOW_PIN = IO26;
+  const int GREEN_PIN = IO25;
+#else
+#error "Unsupported platform! Only ESP32 and ESP8266 are supported."
+#endif
+
+  // Configure pins
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(YELLOW_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+
+  if (red)
+  {
+    digitalWrite(RED_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(RED_PIN, LOW);
+  }
+  if (yellow)
+  {
+    digitalWrite(YELLOW_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(YELLOW_PIN, LOW);
+  }
+  if (green)
+  {
+    digitalWrite(GREEN_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(GREEN_PIN, LOW);
+  }
 }
 
 /*********************************** Smart LED Sensor ***********************************
  */
-int IOTBOT::moduleSmartLEDRead(int pin)
+void IOTBOT::extendSmartLEDPrepare(int pin, int numLEDs)
 {
+  // Create a new Adafruit_NeoPixel object dynamically
+  pixels = new Adafruit_NeoPixel(numLEDs, pin, NEO_GRB + NEO_KHZ800);
+  pixels->begin(); // Initialize the NeoPixel strip
+  pixels->show();  // Turn off all LEDs initially
+}
+
+void IOTBOT::extendSmartLEDFill(int startLED, int endLED, int red, int green, int blue)
+{
+  if (pixels)
+  {
+    // Set the color for a range of LEDs
+    for (int i = startLED; i <= endLED; i++)
+    {
+      pixels->setPixelColor(i, pixels->Color(red, green, blue));
+    }
+    pixels->show(); // Update the LEDs
+  }
+}
+
+void IOTBOT::moduleSmartLEDPrepare(int pin)
+{
+  pixels = new Adafruit_NeoPixel(3, pin, NEO_GRB + NEO_KHZ800);
+  pixels->begin();
+  pixels->show(); // Clear all LEDs
+}
+
+void IOTBOT::moduleSmartLEDWrite(int led, int red, int green, int blue)
+{
+  if (pixels)
+  {
+    pixels->setPixelColor(led, pixels->Color(red, green, blue));
+    pixels->show();
+  }
+}
+
+uint32_t IOTBOT::getColor(int red, int green, int blue)
+{
+  return pixels->Color(red, green, blue);
+}
+
+void IOTBOT::moduleSmartLEDRainbowEffect(int wait)
+{
+  if (pixels)
+  {
+    for (long firstPixelHue = 0; firstPixelHue < 3 * 65536; firstPixelHue += 256)
+    {
+      for (int i = 0; i < pixels->numPixels(); i++)
+      {
+        int pixelHue = firstPixelHue + (i * 65536L / pixels->numPixels());
+        pixels->setPixelColor(i, pixels->gamma32(pixels->ColorHSV(pixelHue)));
+      }
+      pixels->show();
+      delay(wait);
+    }
+  }
+}
+
+void IOTBOT::moduleSmartLEDRainbowTheaterChaseEffect(int wait)
+{
+  if (pixels)
+  {
+    int firstPixelHue = 0;
+    for (int a = 0; a < 30; a++)
+    {
+      for (int b = 0; b < 3; b++)
+      {
+        pixels->clear();
+        for (int c = b; c < pixels->numPixels(); c += 3)
+        {
+          int hue = firstPixelHue + c * 65536L / pixels->numPixels();
+          uint32_t color = pixels->gamma32(pixels->ColorHSV(hue));
+          pixels->setPixelColor(c, color);
+        }
+        pixels->show();
+        delay(wait);
+        firstPixelHue += 65536 / 90;
+      }
+    }
+  }
+}
+
+void IOTBOT::moduleSmartLEDTheaterChaseEffect(uint32_t color, int wait)
+{
+  if (pixels)
+  {
+    for (int a = 0; a < 10; a++)
+    {
+      for (int b = 0; b < 3; b++)
+      {
+        pixels->clear();
+        for (int c = b; c < pixels->numPixels(); c += 3)
+        {
+          pixels->setPixelColor(c, color);
+        }
+        pixels->show();
+        delay(wait);
+      }
+    }
+  }
+}
+
+void IOTBOT::moduleSmartLEDColorWipeEffect(uint32_t color, int wait)
+{
+  if (pixels)
+  {
+    for (int i = 0; i < pixels->numPixels(); i++)
+    {
+      pixels->setPixelColor(i, color);
+      pixels->show();
+      delay(wait);
+    }
+  }
 }
 
 /*********************************** Motion Sensor ***********************************
  */
-
 int IOTBOT::moduleMotionRead(int pin)
 {
+  return digitalRead(pin);
 }
 
 /*********************************** Smoke Sensor ***********************************
  */
 int IOTBOT::moduleSmokeRead(int pin)
 {
+  return analogRead(pin);
 }
 
 /*********************************** Mic Sensor ***********************************
  */
 int IOTBOT::moduleMicRead(int pin)
 {
+  return analogRead(pin);
 }
 
 /*********************************** Soil Moisture Sensor ***********************************
  */
 int IOTBOT::moduleSoilMoistureRead(int pin)
 {
+  return analogRead(pin);
 }
 
 /*********************************** IR Sensor ***********************************
  */
+
 int IOTBOT::moduleIRRead(int pin)
 {
+  /*
+    IrReceiver.begin(pin, false);
+
+    if (IrReceiver.decode())
+    {
+        if (!(IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT)) // Skip repeated signals
+        {
+            int command = IrReceiver.decodedIRData.command;
+            IrReceiver.resume();
+            return command; // Return IR command
+        }
+        IrReceiver.resume();
+    }
+    return 0; // Return 0 if no signal is received
+  */
 }
 
 /*********************************** Relay Sensor ***********************************
  */
-void IOTBOT::moduleRelayWrite(int pin)
+void IOTBOT::moduleRelayWrite(int pin, bool status)
 {
-}
-
-/***********************************  Sensor ***********************************
- */
-int IOTBOT::module Read()
-{
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, status);
 }
 
 /*********************************** OTHER PINS ***********************************

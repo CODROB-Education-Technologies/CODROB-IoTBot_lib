@@ -1,9 +1,14 @@
 #ifndef IOTBOT_H
 #define IOTBOT_H
 
+#if defined(ESP32)
+
 #include <Arduino.h>
-#include <LiquidCrystal_I2C.h>
 #include <ESP32Servo.h>
+#include <LiquidCrystal_I2C.h>
+#include <DHT.h>
+#include <Stepper.h>
+#include <Adafruit_NeoPixel.h>
 
 // Pin tanımlamaları
 #define JOYSTICK_Y_PIN 34
@@ -18,7 +23,7 @@
 #define LDR_PIN 39
 #define POT_PIN 36
 #define B3_BUTTON_PIN 0
-#define LCD_ADRESS 0x27
+#define LCD_ADRESS PCF8574_ADDR_A21_A11_A01
 
 // BUNLAR UYGULAMAYA GÖRE GEREKTİĞİNDE İNPU GEREKTİĞİNDE OUTPUT OLACAK PİNLER.
 #define IO25 25
@@ -69,7 +74,7 @@ public:
 
   /*********************************** RELAY ***********************************
    */
-  void relaySet(bool status);
+  void relayWrite(bool status);
   void relaytest();
 
   /*********************************** POTANTIOMETER ***********************************
@@ -99,11 +104,11 @@ public:
 
   /*********************************** DRIVER AND MOTORS ***********************************
    */
-  void moduleStepMotorMotion(bool rotation, int accelometer, int speed);
+  void moduleStepMotorMotion(int step, bool rotation, int accelometer, int speed);
   void moduleDCMotorGOClockWise(int speed);
   void moduleDCMotorGOCounterClockWise(int speed);
   void moduleDCMotorStop();
-  void moduleDCMotorBrake(int speed);
+  void moduleDCMotorBrake();
 
   /*********************************** Servo Motor Sensor ***********************************
    */
@@ -118,7 +123,7 @@ public:
 
   /*********************************** NTC Temp Sensor ***********************************
    */
-  int moduleNtcTempRead(int pin);
+  float moduleNtcTempRead(int pin);
 
   /*********************************** Magnetic Sensor ***********************************
    */
@@ -126,11 +131,13 @@ public:
 
   /*********************************** Matris Button Sensor ***********************************
    */
-  int moduleMatrisButtonRead(int pin);
+  int moduleMatrisButtonAnalogRead(int pin);
+  int moduleMatrisButtonNumberRead(int pin);
 
   /*********************************** Vibration Sensor ***********************************
    */
-  int moduleVibrationRead(int pin);
+  int moduleVibrationDigitalRead(int pin);
+  int moduleVibrationAnalogRead(int pin);
 
   /*********************************** Ultrasonic Distance Sensor ***********************************
    */
@@ -138,11 +145,20 @@ public:
 
   /*********************************** Trafic Ligh Sensor ***********************************
    */
-  int moduleTraficLightRead();
+  void moduleTraficLightWrite(bool red, bool yellow, bool green);
 
   /*********************************** Smart LED Sensor ***********************************
    */
-  int moduleSmartLEDRead(int pin);
+  void extendSmartLEDPrepare(int pin, int numLEDs);
+  void extendSmartLEDFill(int startLED, int endLED, int red, int green, int blue);
+
+  void moduleSmartLEDPrepare(int pin);                             // Initialize NeoPixel strip
+  void moduleSmartLEDWrite(int led, int red, int green, int blue); // Write RGB values to specific LED
+  void moduleSmartLEDRainbowEffect(int wait);                      // Rainbow effect
+  void moduleSmartLEDRainbowTheaterChaseEffect(int wait);          // Rainbow theater chase effect
+  void moduleSmartLEDTheaterChaseEffect(uint32_t color, int wait); // Theater chase effect
+  void moduleSmartLEDColorWipeEffect(uint32_t color, int wait);    // Color wipe effect
+  uint32_t getColor(int red, int green, int blue);                 // Helper function for creating colors
 
   /*********************************** Motion Sensor ***********************************
    */
@@ -167,7 +183,7 @@ public:
 
   /*********************************** Relay Sensor ***********************************
    */
-  void moduleRelayWrite(int pin);
+  void moduleRelayWrite(int pin, bool status);
 
   /*********************************** OTHER PINS ***********************************
    */
@@ -178,11 +194,18 @@ public:
 
 private:
   LiquidCrystal_I2C lcd;
-  Servo servoModul;
-  int encoderCount; // Stores the encoder's position
-  int lastStateA;   // Stores the last state of A pin
-  int lastStateB;   // Stores the last state of B pin
+  DHT *dhtSensor;    // Pointer to DHT sensor object
+  Servo servoModule; // Create a Servo object for controlling the servo motor
+  int encoderCount;  // Stores the encoder's position
+  int lastStateA;    // Stores the last state of A pin
+  int lastStateB;    // Stores the last state of B pin
   int counterBuzzer, counterLCD, counterLDR, counterRelay, counterPot, counterJoystick, counterButtons, counterEncoder = 0;
+  void initializeDht(int pin, uint8_t type);
+  Adafruit_NeoPixel *pixels; // NeoPixel object pointer
 };
+
+#else
+#error "Unsupported platform! Only ESP32 and ESP8266 are supported."
+#endif
 
 #endif // IOTBOT_H
