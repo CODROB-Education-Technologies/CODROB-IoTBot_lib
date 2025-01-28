@@ -9,23 +9,23 @@
 #include <DHT.h>
 #include <Stepper.h>
 #include <Adafruit_NeoPixel.h>
+// #include <IRremote.hpp>
 
-// Pin tanımlamaları
+// Pins
 #define JOYSTICK_Y_PIN 34
 #define JOYSTICK_X_PIN 15
 #define JOYSTICK_BUTTON_PIN 35
 #define ENCODER_A_PIN 16
 #define ENCODER_B_PIN 17
 #define ENCODER_BUTTON_PIN 13
-#define B1_AND_B2_BUTTON_PIN 4 // iki tane seri bağlı analog buton. analog deger 2000 ile 1000 arasındayda b1, 2000 ile 3000 arasındaysa b2 oluyor.
-#define BUZZER_PIN 12
+#define B1_AND_B2_BUTTON_PIN 4
 #define RELAY_PIN 14
 #define LDR_PIN 39
 #define POT_PIN 36
 #define B3_BUTTON_PIN 0
-#define LCD_ADRESS PCF8574_ADDR_A21_A11_A01
+#define LCD_ADRESS 0x27
+#define LED_BUILTIN 1
 
-// BUNLAR UYGULAMAYA GÖRE GEREKTİĞİNDE İNPU GEREKTİĞİNDE OUTPUT OLACAK PİNLER.
 #define IO25 25
 #define IO26 26
 #define IO27 27

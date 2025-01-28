@@ -24,7 +24,7 @@ void IOTBOT::begin()
   lastStateB = digitalRead(ENCODER_B_PIN);
 
   // LCD begin
-  lcd.begin();
+  lcd.init();
   lcd.backlight();
   lcd.clear();
   tone(BUZZER_PIN, 750, 125); // 80 Hz'de 125 ms çal
