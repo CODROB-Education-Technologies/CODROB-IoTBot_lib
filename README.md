@@ -1,6 +1,6 @@
 # IoTBOT Library User Guide
 This library is specially designed and produced by the CODROB developer team to control the IoTBOT product.
-![alt text](<images/1 (2).jpg>)
+![alt text](<images/1.png>)
 
 
 ## Using with Arduino IDE
@@ -17,7 +17,7 @@ This library is specially designed and produced by the CODROB developer team to 
 
 # IoTBOT Kütüphanesi Kullanım Kılavuzu
 Bu kütüphane CODROB  geliştirici ekibi tarafından IoTBOT ürününü kontrol etmek için özel olarak tasarlanmış ve üretilmiştir. 
-![alt text](<images/1 (2).jpg>)
+![alt text](<images/1.png>)
 
 
 
@@ -41,8 +41,7 @@ Bu kütüphane 2024 Yılında Samed KAYA tarafından lisanslanmıştır. Detayla
 
  See the LICENSE file for details.
 
-![alt text](<images/1 (1).jpg>)
-![alt text](<images/1 (2).jpg>)
-![alt text](<images/1 (4).jpg>)
-![alt text](<images/1 (8).jpg>)
-![alt text](<images/VEKTÖR.png>)
+![alt text](<images/2.png>)
+![alt text](<images/3.png>)
+![alt text](<images/4.png>)
+![alt text](<images/5.png>)

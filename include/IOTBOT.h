@@ -86,20 +86,20 @@ public:
    */
   int joystickXRead();
   int joystickYRead();
-  int joystickButtonRead();
+  bool joystickButtonRead();
   void joysticktest();
 
   /*********************************** BUTTONS ***********************************
    */
-  int button1Read();
-  int button2Read();
-  int button3Read();
+  bool button1Read();
+  bool button2Read();
+  bool button3Read();
   void buttonsAnalogtest();
 
   /*********************************** ENCODER ***********************************
    */
   int encoderRead();
-  int encoderButtonRead();
+  bool encoderButtonRead();
   void encodertest();
 
   /*********************************** DRIVER AND MOTORS ***********************************
@@ -127,7 +127,7 @@ public:
 
   /*********************************** Magnetic Sensor ***********************************
    */
-  int moduleMagneticRead(int pin);
+  bool moduleMagneticRead(int pin);
 
   /*********************************** Matris Button Sensor ***********************************
    */
@@ -136,7 +136,7 @@ public:
 
   /*********************************** Vibration Sensor ***********************************
    */
-  int moduleVibrationDigitalRead(int pin);
+  bool moduleVibrationDigitalRead(int pin);
   int moduleVibrationAnalogRead(int pin);
 
   /*********************************** Ultrasonic Distance Sensor ***********************************
@@ -162,7 +162,7 @@ public:
 
   /*********************************** Motion Sensor ***********************************
    */
-  int moduleMotionRead(int pin);
+  bool moduleMotionRead(int pin);
 
   /*********************************** Smoke Sensor ***********************************
    */
@@ -188,8 +188,8 @@ public:
    */
   int analogReadPin(int pin);
   void analogWritePin(int pin, int value);
-  int digitalReadPin(int pin);
-  void digitalWritePin(int pin, int value);
+  bool digitalReadPin(int pin);
+  void digitalWritePin(int pin, bool value);
 
 private:
   LiquidCrystal_I2C lcd;

@@ -379,7 +379,7 @@ int IOTBOT::joystickYRead()
   return analogRead(JOYSTICK_Y_PIN);
 }
 
-int IOTBOT::joystickButtonRead()
+bool IOTBOT::joystickButtonRead()
 {
   return digitalRead(JOYSTICK_BUTTON_PIN);
 }
@@ -420,45 +420,45 @@ void IOTBOT::joysticktest()
 
 /*********************************** BUTTONS ***********************************
  */
-int IOTBOT::button1Read()
+bool IOTBOT::button1Read()
 {
   int value = analogRead(B1_AND_B2_BUTTON_PIN);
 
   if (value > 3500)
   {
-    return 1;
+    return true;
   }
   else
   {
-    return 0;
+    return false;
   }
 }
 
-int IOTBOT::button2Read()
+bool IOTBOT::button2Read()
 {
   int value = analogRead(B1_AND_B2_BUTTON_PIN);
 
   if (value > 1500 && value < 3000)
   {
-    return 1;
+    return true;
   }
   else
   {
-    return 0;
+    return false;
   }
 }
 
-int IOTBOT::button3Read()
+bool IOTBOT::button3Read()
 {
   int value = digitalRead(B3_BUTTON_PIN);
 
   if (value == LOW)
   {
-    return 1;
+    return true;
   }
   else
   {
-    return 0;
+    return false;
   }
 }
 
@@ -547,17 +547,17 @@ int IOTBOT::encoderRead()
   return encoderCount;
 }
 
-int IOTBOT::encoderButtonRead()
+bool IOTBOT::encoderButtonRead()
 {
   int value = digitalRead(ENCODER_BUTTON_PIN);
 
   if (value)
   {
-    return 1;
+    return true;
   }
   else
   {
-    return 0;
+    return false;
   }
 }
 
@@ -812,7 +812,7 @@ float IOTBOT::moduleNtcTempRead(int pin)
 
 /*********************************** Magnetic Sensor ***********************************
  */
-int IOTBOT::moduleMagneticRead(int pin)
+bool IOTBOT::moduleMagneticRead(int pin)
 {
   // Configure pins
   pinMode(pin, INPUT);
@@ -861,7 +861,7 @@ int IOTBOT::moduleMatrisButtonNumberRead(int pin)
 
 /*********************************** Vibration Sensor ***********************************
  */
-int IOTBOT::moduleVibrationDigitalRead(int pin)
+bool IOTBOT::moduleVibrationDigitalRead(int pin)
 {
   // Configure pins
   pinMode(pin, INPUT);
@@ -1087,7 +1087,7 @@ void IOTBOT::moduleSmartLEDColorWipeEffect(uint32_t color, int wait)
 
 /*********************************** Motion Sensor ***********************************
  */
-int IOTBOT::moduleMotionRead(int pin)
+bool IOTBOT::moduleMotionRead(int pin)
 {
   // Configure pins
   pinMode(pin, INPUT);
@@ -1168,14 +1168,14 @@ void IOTBOT::analogWritePin(int pin, int value)
   ledcWrite(pwmChannel, value);
 }
 
-int IOTBOT::digitalReadPin(int pin)
+bool IOTBOT::digitalReadPin(int pin)
 {
   // Configure pins
   pinMode(pin, INPUT);
   return digitalRead(pin);
 }
 
-void IOTBOT::digitalWritePin(int pin, int value)
+void IOTBOT::digitalWritePin(int pin, bool value)
 {
   pinMode(pin, OUTPUT);
   digitalWrite(pin, value);
