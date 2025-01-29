@@ -563,7 +563,6 @@ int IOTBOT::encoderButtonRead()
 
 void IOTBOT::encodertest()
 {
-
   if (counterEncoder < 1)
   {
     lcd.clear();
@@ -785,6 +784,9 @@ int IOTBOT::moduleDthFeelingTemp(int pin) // Calculate Heat Index (Feeling Tempe
  */
 float IOTBOT::moduleNtcTempRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
+
   // NTC constants
   const float R_NOMINAL = 10000.0;       // Nominal resistance at 25°C (10k ohms)
   const float T_NOMINAL = 25.0;          // Nominal temperature (25°C)
@@ -812,6 +814,8 @@ float IOTBOT::moduleNtcTempRead(int pin)
  */
 int IOTBOT::moduleMagneticRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return !digitalRead(pin);
 }
 
@@ -819,11 +823,15 @@ int IOTBOT::moduleMagneticRead(int pin)
  */
 int IOTBOT::moduleMatrisButtonAnalogRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return analogRead(pin);
 }
 
 int IOTBOT::moduleMatrisButtonNumberRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   int value = analogRead(pin);
   if (value > 4000)
   {
@@ -855,11 +863,15 @@ int IOTBOT::moduleMatrisButtonNumberRead(int pin)
  */
 int IOTBOT::moduleVibrationDigitalRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return digitalRead(pin);
 }
 
 int IOTBOT::moduleVibrationAnalogRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return analogRead(pin);
 }
 
@@ -1077,6 +1089,8 @@ void IOTBOT::moduleSmartLEDColorWipeEffect(uint32_t color, int wait)
  */
 int IOTBOT::moduleMotionRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return digitalRead(pin);
 }
 
@@ -1084,6 +1098,8 @@ int IOTBOT::moduleMotionRead(int pin)
  */
 int IOTBOT::moduleSmokeRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return analogRead(pin);
 }
 
@@ -1091,6 +1107,8 @@ int IOTBOT::moduleSmokeRead(int pin)
  */
 int IOTBOT::moduleMicRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return analogRead(pin);
 }
 
@@ -1098,6 +1116,8 @@ int IOTBOT::moduleMicRead(int pin)
  */
 int IOTBOT::moduleSoilMoistureRead(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return analogRead(pin);
 }
 
@@ -1135,11 +1155,14 @@ void IOTBOT::moduleRelayWrite(int pin, bool status)
  */
 int IOTBOT::analogReadPin(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return analogRead(pin);
 }
 
 void IOTBOT::analogWritePin(int pin, int value)
 {
+  pinMode(pin, OUTPUT);
   int pwmChannel = pin % 16;
   ledcAttachPin(pin, pwmChannel);
   ledcWrite(pwmChannel, value);
@@ -1147,6 +1170,8 @@ void IOTBOT::analogWritePin(int pin, int value)
 
 int IOTBOT::digitalReadPin(int pin)
 {
+  // Configure pins
+  pinMode(pin, INPUT);
   return digitalRead(pin);
 }
 
