@@ -87,7 +87,6 @@ void IOTBOT::playIntro()
 
 /*********************************** Serial Port ***********************************
  */
-
 void IOTBOT::serialStart(int baudrate)
 {
   Serial.begin(baudrate);
@@ -103,6 +102,12 @@ void IOTBOT::serialWrite(const char *message)
 void IOTBOT::serialWrite(String message)
 {
   Serial.println(message.c_str()); // Convert String to const char*
+}
+
+// Overloaded function for long / `long` için özel fonksiyon
+void IOTBOT::serialWrite(long value)
+{
+  Serial.println(String(value).c_str());
 }
 
 // Overloaded function for int / `int` için fonksiyon
@@ -125,7 +130,6 @@ void IOTBOT::serialWrite(bool value)
 
 /*********************************** BUZZER ***********************************
  */
-
 void IOTBOT::buzzerPlayTone(int frequency, int duration)
 {
   tone(BUZZER_PIN, frequency, duration);
@@ -167,7 +171,6 @@ void IOTBOT::buzzertest()
 
 /*********************************** LCD SCREEN ***********************************
  */
-
 void IOTBOT::lcdWriteMid(const char *line1, const char *line2, const char *line3, const char *line4)
 {
   lcd.clear();
@@ -1143,8 +1146,7 @@ int IOTBOT::moduleSoilMoistureRead(int pin)
 /*********************************** IR Sensor ***********************************
  */
 
-// Initialize the IR module / IR modülünü başlat
-void IOTBOT::initializeIR(int pin)
+void IOTBOT::initializeIR(int pin) // Initialize the IR module / IR modülünü başlat
 {
   if (!irrecv || irPin != pin)
   {                                           // Eğer IR alıcı yoksa veya pin değişmişse baştan başlat
@@ -1155,8 +1157,7 @@ void IOTBOT::initializeIR(int pin)
   }
 }
 
-// Read IR signal in hexadecimal format / IR sinyalini HEX formatında oku
-String IOTBOT::moduleIRReadHex(int pin)
+String IOTBOT::moduleIRReadHex(int pin) // Read IR signal in hexadecimal format / IR sinyalini HEX formatında oku
 {
   initializeIR(pin); // Ensure IR is initialized / IR'nin başlatıldığından emin ol
   if (irrecv->decode(&results))
@@ -1168,8 +1169,7 @@ String IOTBOT::moduleIRReadHex(int pin)
   return "0"; // No signal received / Sinyal yoksa 0 döndür
 }
 
-// Read IR signal as a full 32-bit decimal value / IR sinyalini tam 32-bit ondalık formatta oku
-int IOTBOT::moduleIRReadDecimalx32(int pin)
+int IOTBOT::moduleIRReadDecimalx32(int pin) // Read IR signal as a full 32-bit decimal value / IR sinyalini tam 32-bit ondalık formatta oku
 {
   initializeIR(pin); // Ensure IR is initialized / IR'nin başlatıldığından emin ol
   if (irrecv->decode(&results))
@@ -1181,8 +1181,7 @@ int IOTBOT::moduleIRReadDecimalx32(int pin)
   return 0; // No signal received / Sinyal yoksa 0 döndür
 }
 
-// Read IR signal as only the last 8 bits (for smaller values) / IR sinyalini sadece son 8 bit olarak oku (küçük değerler için)
-int IOTBOT::moduleIRReadDecimalx8(int pin)
+int IOTBOT::moduleIRReadDecimalx8(int pin) // Read IR signal as only the last 8 bits (for smaller values) / IR sinyalini sadece son 8 bit olarak oku (küçük değerler için)
 {
   initializeIR(pin); // Ensure IR is initialized / IR'nin başlatıldığından emin ol
   if (irrecv->decode(&results))

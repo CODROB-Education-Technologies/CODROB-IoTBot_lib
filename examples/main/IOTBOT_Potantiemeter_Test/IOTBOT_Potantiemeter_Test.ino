@@ -1,19 +1,29 @@
-#include <IOTBOT.h> // IoTBot kütüphanesi / IoTBot library
+#include <IOTBOT.h>
 
-IOTBOT iotbot; // IoTBot nesnesi oluşturuluyor / Create IoTBot object
+IOTBOT iotbot;
 
 void setup()
 {
-    iotbot.begin();             // IoTBot başlatılıyor / Initialize IoTBot
-    iotbot.serialStart(115200); // Seri iletişim başlatılıyor / Start serial communication
-    iotbot.serialWrite("Potansiyometre testi başlatıldı / Potentiometer test started.");
+    iotbot.begin();
+    iotbot.serialStart(115200);
+
+    iotbot.lcdClear();
+    iotbot.lcdWriteMid("Potansiyometre", "--- IoTBot ---", "Başlatıldı!", "Started!");
+    iotbot.serialWrite("🎚 Potansiyometre testi başlatıldı / Potentiometer test started.");
+
+    delay(3000);
 }
 
 void loop()
 {
-    int potValue = iotbot.potentiometerRead(); // Potansiyometre değeri okunuyor / Read potentiometer value
-    iotbot.serialWrite("Potansiyometre Değeri / Potentiometer Value: ");
-    iotbot.serialWrite(potValue); // Potansiyometre değeri yazdırılıyor / Print potentiometer value
+    int potValue = iotbot.potentiometerRead();
 
-    delay(500); // Test için kısa bir gecikme / Short delay for testing
+    iotbot.serialWrite("🎚 Potansiyometre Değeri / Potentiometer Value: " + String(potValue));
+
+    iotbot.lcdClear();
+    iotbot.lcdWriteCR(0, 0, "Potansiyometre Test");
+    iotbot.lcdWriteCR(0, 1, "Deger:");
+    iotbot.lcdWriteCR(7, 1, String(potValue));
+
+    delay(500);
 }

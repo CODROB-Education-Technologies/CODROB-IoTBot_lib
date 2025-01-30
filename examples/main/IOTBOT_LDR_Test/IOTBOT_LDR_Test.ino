@@ -1,19 +1,29 @@
-#include <IOTBOT.h> // IoTBot kütüphanesi / IoTBot library
+#include <IOTBOT.h>
 
-IOTBOT iotbot; // IoTBot nesnesi oluşturuluyor / Create IoTBot object
+IOTBOT iotbot;
 
 void setup()
 {
-    iotbot.begin();             // IoTBot başlatılıyor / Initialize IoTBot
-    iotbot.serialStart(115200); // Seri iletişim başlatılıyor / Start serial communication
-    iotbot.serialWrite("LDR testi başlatıldı / LDR test started.");
+    iotbot.begin();
+    iotbot.serialStart(115200);
+
+    iotbot.lcdClear();
+    iotbot.lcdWriteMid("LDR Test", "--- IoTBot ---", "Başlatıldı!", "Started!");
+    iotbot.serialWrite("💡 LDR testi başlatıldı / LDR test started.");
+
+    delay(3000);
 }
 
 void loop()
 {
-    int ldrValue = iotbot.ldrRead(); // LDR değeri okunuyor / Read LDR value
-    iotbot.serialWrite("LDR Değeri / LDR Value: ");
-    iotbot.serialWrite(ldrValue); // LDR değeri yazdırılıyor / Print LDR value
+    int ldrValue = iotbot.ldrRead();
 
-    delay(500); // Test için kısa bir gecikme / Short delay for testing
+    iotbot.serialWrite("💡 LDR Değeri / LDR Value: " + String(ldrValue));
+
+    iotbot.lcdClear();
+    iotbot.lcdWriteCR(0, 0, "LDR Test");
+    iotbot.lcdWriteCR(0, 1, "LDR Degeri:");
+    iotbot.lcdWriteCR(10, 1, String(ldrValue));
+
+    delay(500);
 }

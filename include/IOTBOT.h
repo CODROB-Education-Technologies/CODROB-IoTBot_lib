@@ -47,6 +47,7 @@ public:
   void serialStart(int baundrate);
   void serialWrite(const char *message);
   void serialWrite(String message);
+  void serialWrite(long value);
   void serialWrite(int value);
   void serialWrite(float value);
   void serialWrite(bool value);
@@ -122,7 +123,6 @@ public:
 
   /*********************************** DHT Sensor ***********************************
    */
-
   int moduleDhtTempRead(int pin);
   int moduleDhtHumRead(int pin);
   int moduleDthFeelingTemp(int pin);

@@ -1,30 +1,39 @@
-#include <IOTBOT.h> // IoTBot kütüphanesi / IoTBot library
+#include <IOTBOT.h>
 
-IOTBOT iotbot; // IoTBot nesnesi oluşturuluyor / Create IoTBot object
+IOTBOT iotbot;
 
 void setup()
 {
-    iotbot.begin();             // IoTBot başlatılıyor / Initialize IoTBot
-    iotbot.serialStart(115200); // Seri iletişim başlatılıyor / Start serial communication
-    iotbot.serialWrite("Encoder testi başlatıldı / Encoder test started.");
+    iotbot.begin();
+    iotbot.serialStart(115200);
+
+    iotbot.lcdClear();
+    iotbot.lcdWriteMid("Encoder Test", "--- IoTBot ---", "Başlatıldı!", "Started!");
+    iotbot.serialWrite("🔄 Encoder testi başlatıldı / Encoder test started.");
+
+    delay(3000);
 }
 
 void loop()
 {
     static unsigned long previousMillis = 0;
-    const long interval = 500; // Yarım saniyede bir yazdırma için 500 milisaniye / Wait 500ms
+    const long interval = 500;
 
     unsigned long currentMillis = millis();
-    int encoderValue = iotbot.encoderRead();       // Encoder değeri okunuyor / Read encoder value
-    int buttonStatus = iotbot.encoderButtonRead(); // Encoder buton durumu okunuyor / Read encoder button status
+    int encoderValue = iotbot.encoderRead();
+    int buttonStatus = iotbot.encoderButtonRead();
 
     if (currentMillis - previousMillis >= interval)
     {
         previousMillis = currentMillis;
 
-        iotbot.serialWrite("Encoder Değeri / Encoder Value: ");
-        iotbot.serialWrite(encoderValue); // Encoder değeri yazdırılıyor / Print encoder value
-        iotbot.serialWrite("Encoder Buton Durumu / Encoder Button Status: ");
-        iotbot.serialWrite(buttonStatus); // Encoder buton durumu yazdırılıyor / Print encoder button status
+        iotbot.serialWrite("🔄 Encoder: " + String(encoderValue) + " | Buton: " + String(buttonStatus));
+
+        iotbot.lcdClear();
+        iotbot.lcdWriteCR(0, 0, "Encoder Test");
+        iotbot.lcdWriteCR(0, 1, "Deger / Value:");
+        iotbot.lcdWriteCR(10, 1, String(encoderValue));
+        iotbot.lcdWriteCR(0, 2, "Buton:");
+        iotbot.lcdWriteCR(10, 2, buttonStatus ? "BASILI" : "SERBEST");
     }
 }
