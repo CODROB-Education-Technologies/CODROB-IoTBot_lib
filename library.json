@@ -1,6 +1,6 @@
 {
   "name": "CODROB_IOTBOT",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Library for IOTBOT, an ESP32-based programmable device. Visit www.codrob.com.tr for more information.",
   "keywords": [
     "robotics",
@@ -30,6 +30,7 @@
       "examples/*",
       "test/*",
       "README.md",
+      "keywords.txt",
       "LICENSE",
       "CHANGELOG.md"
     ]
@@ -53,6 +54,7 @@
     "adafruit/Adafruit NeoPixel": ">=1.10.6",
     "adafruit/Adafruit Unified Sensor": ">=1.0.3",
     "adafruit/DHT sensor library": ">=1.4.4",
-    "arduino-libraries/Stepper": ">=1.1.3"
+    "arduino-libraries/Stepper": ">=1.1.3",
+    "crankyoldgit/IRremoteESP8266": ">=2.8.6"
   }
 }

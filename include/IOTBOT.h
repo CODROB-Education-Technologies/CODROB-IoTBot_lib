@@ -9,6 +9,9 @@
 #include <DHT.h>
 #include <Stepper.h>
 #include <Adafruit_NeoPixel.h>
+#include <IRremoteESP8266.h>
+#include <IRrecv.h>
+#include <IRutils.h>
 
 // Pins
 #define JOYSTICK_Y_PIN 34
@@ -43,6 +46,7 @@ public:
    */
   void serialStart(int baundrate);
   void serialWrite(const char *message);
+  void serialWrite(String message);
   void serialWrite(int value);
   void serialWrite(float value);
   void serialWrite(bool value);
@@ -56,14 +60,16 @@ public:
   /*********************************** LCD SCREEN ***********************************
    */
   void lcdWriteMid(const char *line1, const char *line2, const char *line3, const char *line4);
+  void lcdWrite(String text);
+  void lcdWrite(int value);
+  void lcdWrite(float value);
+  void lcdWrite(bool value);
   void lcdWriteCR(int col, int row, const char *text);
+  void lcdWriteCR(int col, int row, String text);
   void lcdWriteCR(int col, int row, int value);
   void lcdWriteCR(int col, int row, float value);
   void lcdWriteCR(int col, int row, bool value);
   void lcdWrite(const char *text);
-  void lcdWrite(int value);
-  void lcdWrite(float value);
-  void lcdWrite(bool value);
   void lcdClear();
   void lcdtest();
 
@@ -178,7 +184,9 @@ public:
 
   /*********************************** IR Sensor ***********************************
    */
-  int moduleIRRead(int pin);
+  String moduleIRReadHex(int pin);
+  int moduleIRReadDecimalx32(int pin);
+  int moduleIRReadDecimalx8(int pin);
 
   /*********************************** Relay Sensor ***********************************
    */
@@ -193,15 +201,25 @@ public:
 
 private:
   LiquidCrystal_I2C lcd;
-  DHT *dhtSensor;    // Pointer to DHT sensor object
+
   Servo servoModule; // Create a Servo object for controlling the servo motor
   int currentAngle = 0;
+
   int encoderCount; // Stores the encoder's position
   int lastStateA;   // Stores the last state of A pin
   int lastStateB;   // Stores the last state of B pin
   int counterBuzzer, counterLCD, counterLDR, counterRelay, counterPot, counterJoystick, counterButtons, counterEncoder = 0;
+
   void initializeDht(int pin, uint8_t type);
+  DHT *dhtSensor; // Pointer to DHT sensor object
+
   Adafruit_NeoPixel *pixels; // NeoPixel object pointer
+
+  void initializeIR(int pin);
+  IRrecv *irrecv = nullptr; // Pointer to IR receiver / IR alıcısı için pointer
+  decode_results results;   // Stores received IR results / Alınan IR sinyallerini saklar
+  int irPin;                // Store the IR receiver pin / IR alıcı pini sakla
+  long irRawValue = 0;      // Stores last received IR value / En son alınan IR değerini saklar
 };
 
 #else

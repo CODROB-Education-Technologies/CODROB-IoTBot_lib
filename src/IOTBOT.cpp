@@ -88,26 +88,36 @@ void IOTBOT::playIntro()
 /*********************************** Serial Port ***********************************
  */
 
-void IOTBOT::serialStart(int baundrate)
+void IOTBOT::serialStart(int baudrate)
 {
-  Serial.begin(baundrate);
+  Serial.begin(baudrate);
 }
 
+// Overloaded function for const char* / `const char*` için fonksiyon
 void IOTBOT::serialWrite(const char *message)
 {
   Serial.println(message);
 }
 
+// Overloaded function for String / `String` için özel fonksiyon
+void IOTBOT::serialWrite(String message)
+{
+  Serial.println(message.c_str()); // Convert String to const char*
+}
+
+// Overloaded function for int / `int` için fonksiyon
 void IOTBOT::serialWrite(int value)
 {
   Serial.println(String(value).c_str());
 }
 
+// Overloaded function for float / `float` için fonksiyon
 void IOTBOT::serialWrite(float value)
 {
   Serial.println(String(value).c_str());
 }
 
+// Overloaded function for bool / `bool` için fonksiyon
 void IOTBOT::serialWrite(bool value)
 {
   Serial.println(value ? "true" : "false");
@@ -196,22 +206,31 @@ void IOTBOT::lcdWriteMid(const char *line1, const char *line2, const char *line3
   lcd.setCursor(startCol4, 3); // Line 3
   lcd.print(line4);
 }
-
+// Overloaded function for const char* / `const char*` için fonksiyon
 void IOTBOT::lcdWrite(const char *text)
 {
   lcd.print(text);
 }
 
+// Overloaded function for String / `String` için özel fonksiyon
+void IOTBOT::lcdWrite(String text)
+{
+  lcd.print(text.c_str()); // Convert String to const char*
+}
+
+// Overloaded function for int / `int` için fonksiyon
 void IOTBOT::lcdWrite(int value)
 {
   lcd.print(String(value));
 }
 
+// Overloaded function for float / `float` için fonksiyon
 void IOTBOT::lcdWrite(float value)
 {
   lcd.print(String(value));
 }
 
+// Overloaded function for bool / `bool` için fonksiyon
 void IOTBOT::lcdWrite(bool value)
 {
   lcd.print(value ? "true" : "false");
@@ -220,19 +239,23 @@ void IOTBOT::lcdWrite(bool value)
 void IOTBOT::lcdWriteCR(int col, int row, const char *text)
 {
   if (row < 0 || row >= 4 || col < 0 || col >= 20)
-  {
     return;
-  }
   lcd.setCursor(col, row);
   lcd.print(text);
+}
+
+void IOTBOT::lcdWriteCR(int col, int row, String text)
+{
+  if (row < 0 || row >= 4 || col < 0 || col >= 20)
+    return;
+  lcd.setCursor(col, row);
+  lcd.print(text.c_str()); // Convert String to const char*
 }
 
 void IOTBOT::lcdWriteCR(int col, int row, int value)
 {
   if (row < 0 || row >= 4 || col < 0 || col >= 20)
-  {
     return;
-  }
   lcd.setCursor(col, row);
   lcd.print(String(value));
 }
@@ -240,9 +263,7 @@ void IOTBOT::lcdWriteCR(int col, int row, int value)
 void IOTBOT::lcdWriteCR(int col, int row, float value)
 {
   if (row < 0 || row >= 4 || col < 0 || col >= 20)
-  {
     return;
-  }
   lcd.setCursor(col, row);
   lcd.print(String(value));
 }
@@ -250,9 +271,7 @@ void IOTBOT::lcdWriteCR(int col, int row, float value)
 void IOTBOT::lcdWriteCR(int col, int row, bool value)
 {
   if (row < 0 || row >= 4 || col < 0 || col >= 20)
-  {
     return;
-  }
   lcd.setCursor(col, row);
   lcd.print(value ? "true" : "false");
 }
@@ -1124,23 +1143,55 @@ int IOTBOT::moduleSoilMoistureRead(int pin)
 /*********************************** IR Sensor ***********************************
  */
 
-int IOTBOT::moduleIRRead(int pin)
+// Initialize the IR module / IR modülünü başlat
+void IOTBOT::initializeIR(int pin)
 {
-  /*
-    IrReceiver.begin(pin, false);
+  if (!irrecv || irPin != pin)
+  {                                           // Eğer IR alıcı yoksa veya pin değişmişse baştan başlat
+    irPin = pin;                              // Store the IR receiver pin / IR alıcı pini sakla
+    delete irrecv;                            // Önceki nesneyi temizle
+    irrecv = new IRrecv(pin, 1024, 50, true); // Create a new IRrecv instance / Yeni bir IRrecv nesnesi oluştur
+    irrecv->enableIRIn();                     // Start the IR receiver / IR alıcıyı başlat
+  }
+}
 
-    if (IrReceiver.decode())
-    {
-        if (!(IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT)) // Skip repeated signals
-        {
-            int command = IrReceiver.decodedIRData.command;
-            IrReceiver.resume();
-            return command; // Return IR command
-        }
-        IrReceiver.resume();
-    }
-    return 0; // Return 0 if no signal is received
-  */
+// Read IR signal in hexadecimal format / IR sinyalini HEX formatında oku
+String IOTBOT::moduleIRReadHex(int pin)
+{
+  initializeIR(pin); // Ensure IR is initialized / IR'nin başlatıldığından emin ol
+  if (irrecv->decode(&results))
+  {
+    String hexCode = "0x" + String(results.value, HEX); // Convert to HEX / HEX formatına çevir
+    irrecv->resume();                                   // Continue receiving new data / Yeni veri almak için devam et
+    return hexCode;
+  }
+  return "0"; // No signal received / Sinyal yoksa 0 döndür
+}
+
+// Read IR signal as a full 32-bit decimal value / IR sinyalini tam 32-bit ondalık formatta oku
+int IOTBOT::moduleIRReadDecimalx32(int pin)
+{
+  initializeIR(pin); // Ensure IR is initialized / IR'nin başlatıldığından emin ol
+  if (irrecv->decode(&results))
+  {
+    int decimalCode = results.value; // Return the full 32-bit value / Tam 32-bit değeri döndür
+    irrecv->resume();                // Continue receiving new data / Yeni veri almak için devam et
+    return decimalCode;
+  }
+  return 0; // No signal received / Sinyal yoksa 0 döndür
+}
+
+// Read IR signal as only the last 8 bits (for smaller values) / IR sinyalini sadece son 8 bit olarak oku (küçük değerler için)
+int IOTBOT::moduleIRReadDecimalx8(int pin)
+{
+  initializeIR(pin); // Ensure IR is initialized / IR'nin başlatıldığından emin ol
+  if (irrecv->decode(&results))
+  {
+    int smallCode = results.value & 0xFF; // Extract only the last 8 bits / Sadece son 8 biti al
+    irrecv->resume();                     // Continue receiving new data / Yeni veri almak için devam et
+    return smallCode;
+  }
+  return 0; // No signal received / Sinyal yoksa 0 döndür
 }
 
 /*********************************** Relay Sensor ***********************************
