@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.2.1] - 2025-01-31
+### Added
+- RFID Kütüphanesi eklendi 
+- DHT için Fahreneght kodlaarı eklendi. 
+- Wifi Kütüphaneleri ve fonskiyonları ekleni 
+- Local server fonksiyonaları eklendi. 
+- EEPROM fonksiyonları ekledi.
+
+### Fixed
+- Servo motor ayarları optimize edildi. 
+- Açıklamalar düzeltildi. 
+
+## [1.2.0] - 2025-01-30
+### Added
+- Eksik olan tüm kütüphaneler eklendi, örnek uygulamalar güncellendi. 
+
+### Fixed
+- Servo ve IR okuyucu modüllerindeki buglar düzeltildi. 
+
 ## [1.0.7] - 2025-01-25
 ### Added
 - Test kodları oluşturuldu:

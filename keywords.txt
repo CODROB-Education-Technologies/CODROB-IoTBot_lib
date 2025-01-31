@@ -55,9 +55,11 @@ moduleDCMotorBrake	KEYWORD2
 
 moduleServoGoAngle	KEYWORD2
 
-moduleDhtTempRead	KEYWORD2
+moduleDhtTempReadC	KEYWORD2
+moduleDthFeelingTempC	KEYWORD2
+moduleDhtTempReadF	KEYWORD2
+moduleDthFeelingTempF	KEYWORD2
 moduleDhtHumRead	KEYWORD2
-moduleDthFeelingTemp	KEYWORD2
 
 moduleNtcTempRead	KEYWORD2
 
@@ -91,13 +93,30 @@ moduleMicRead	KEYWORD2
 
 moduleSoilMoistureRead	KEYWORD2
 
-moduleIRRead	KEYWORD2
+moduleIRReadHex	KEYWORD2
+moduleIRReadDecimalx32	KEYWORD2
+moduleIRReadDecimalx8	KEYWORD2
 
 moduleRelayWrite	KEYWORD2
+
+moduleRFIDRead  KEYWORD2
 
 analogReadPin	KEYWORD2
 analogWritePin	KEYWORD2
 digitalReadPin	KEYWORD2
 digitalWritePin	KEYWORD2
+
+wifiStartAndConnect	KEYWORD2
+wifiConnectionControl	KEYWORD2
+wifiGetMACAddress	KEYWORD2
+wifiGetIPAddress	KEYWORD2
+
+serverStart	KEYWORD2
+serverCreateLocalPage	KEYWORD2
+serverHandleDNS	KEYWORD2
+serverContinue	KEYWORD2
+
+eepromWriteInt	KEYWORD2
+eepromReadInt	KEYWORD2
 
 #######################################

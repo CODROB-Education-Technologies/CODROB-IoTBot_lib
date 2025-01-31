@@ -5,6 +5,7 @@
 
 #include <Arduino.h>
 #include <ESP32Servo.h>
+#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <DHT.h>
 #include <Stepper.h>
@@ -12,6 +13,12 @@
 #include <IRremoteESP8266.h>
 #include <IRrecv.h>
 #include <IRutils.h>
+#include <MFRC522.h>
+#include <SPI.h>
+#include <WiFi.h>
+#include <ESPAsyncWebServer.h>
+#include <DNSServer.h>
+#include <EEPROM.h>
 
 // Pins
 #define JOYSTICK_Y_PIN 34
@@ -123,9 +130,11 @@ public:
 
   /*********************************** DHT Sensor ***********************************
    */
-  int moduleDhtTempRead(int pin);
+  int moduleDhtTempReadC(int pin);
+  int moduleDthFeelingTempC(int pin);
+  int moduleDhtTempReadF(int pin);
+  int moduleDthFeelingTempF(int pin);
   int moduleDhtHumRead(int pin);
-  int moduleDthFeelingTemp(int pin);
 
   /*********************************** NTC Temp Sensor ***********************************
    */
@@ -157,7 +166,6 @@ public:
    */
   void extendSmartLEDPrepare(int pin, int numLEDs);
   void extendSmartLEDFill(int startLED, int endLED, int red, int green, int blue);
-
   void moduleSmartLEDPrepare(int pin);                             // Initialize NeoPixel strip
   void moduleSmartLEDWrite(int led, int red, int green, int blue); // Write RGB values to specific LED
   void moduleSmartLEDRainbowEffect(int wait);                      // Rainbow effect
@@ -192,12 +200,35 @@ public:
    */
   void moduleRelayWrite(int pin, bool status);
 
+  /*********************************** RFID Sensor ***********************************
+   */
+  int moduleRFIDRead(); // RFID kart ID oku / Read RFID card ID
+
   /*********************************** OTHER PINS ***********************************
    */
   int analogReadPin(int pin);
   void analogWritePin(int pin, int value);
   bool digitalReadPin(int pin);
   void digitalWritePin(int pin, bool value);
+
+  /*********************************** WiFi  ***********************************
+   */
+  void wifiStartAndConnect(const char *ssid, const char *pass);
+  bool wifiConnectionControl();
+  String wifiGetMACAddress();
+  String wifiGetIPAddress();
+
+  /*********************************** Server  ***********************************
+   */
+  void serverStart(const char *mode, const char *ssid, const char *password);
+  void serverCreateLocalPage(const char *url, const char *WEBPageScript, const char *WEBPageCSS, const char *WEBPageHTML);
+  void serverHandleDNS();
+  void serverContinue();
+
+  /*********************************** EEPROM  ***********************************
+   */
+  void eepromWriteInt(int address, int value);
+  int eepromReadInt(int address);
 
 private:
   LiquidCrystal_I2C lcd;
@@ -220,6 +251,15 @@ private:
   decode_results results;   // Stores received IR results / Alınan IR sinyallerini saklar
   int irPin;                // Store the IR receiver pin / IR alıcı pini sakla
   long irRawValue = 0;      // Stores last received IR value / En son alınan IR değerini saklar
+
+  void beginRFID();             // RFID başlat / Initialize RFID module
+  MFRC522 rfid{5, 10};          // RFID modülü nesnesi / RFID module object (SS_PIN: 5, RST_PIN: 10)
+  bool rfidInitialized = false; // RFID'nin başlatılıp başlatılmadığını kontrol eden bayrak / Flag to check initialization
+
+  const IPAddress apIP = IPAddress(192, 168, 4, 1);                                // Sabit IP adresi tanımlanıyor / Define static IP address
+  DNSServer dnsServer;                                                             // DNS sunucusu tanımlanıyor / Define DNS Server
+  AsyncWebServer serverCODROB = AsyncWebServer(80);                                // Async Web Server nesnesi oluşturuluyor / Create an Async Web Server object
+  AsyncWebSocket serverCODROBWebSocket = AsyncWebSocket("/serverCODROBWebSocket"); // WebSocket nesnesi tanımlanıyor / Define WebSocket object
 };
 
 #else

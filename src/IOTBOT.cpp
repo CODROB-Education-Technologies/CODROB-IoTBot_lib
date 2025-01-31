@@ -1,8 +1,9 @@
 #include "IOTBOT.h"
 
-IOTBOT::IOTBOT()
-    : lcd(LCD_ADRESS, 20, 4) {}
+/*********************************** Constructor ***********************************/
+IOTBOT::IOTBOT() : serverCODROB(80), serverCODROBWebSocket("/serverCODROBWebSocket"), lcd(LCD_ADRESS, 20, 4) {}
 
+/*********************************** BRGIN ***********************************/
 void IOTBOT::begin()
 {
   pinMode(JOYSTICK_Y_PIN, INPUT);
@@ -92,38 +93,32 @@ void IOTBOT::serialStart(int baudrate)
   Serial.begin(baudrate);
 }
 
-// Overloaded function for const char* / `const char*` için fonksiyon
-void IOTBOT::serialWrite(const char *message)
+void IOTBOT::serialWrite(const char *message) // Overloaded function for const char* / `const char*` için fonksiyon
 {
   Serial.println(message);
 }
 
-// Overloaded function for String / `String` için özel fonksiyon
-void IOTBOT::serialWrite(String message)
+void IOTBOT::serialWrite(String message) // Overloaded function for String / `String` için özel fonksiyon
 {
   Serial.println(message.c_str()); // Convert String to const char*
 }
 
-// Overloaded function for long / `long` için özel fonksiyon
-void IOTBOT::serialWrite(long value)
+void IOTBOT::serialWrite(long value) // Overloaded function for long / `long` için özel fonksiyon
 {
   Serial.println(String(value).c_str());
 }
 
-// Overloaded function for int / `int` için fonksiyon
-void IOTBOT::serialWrite(int value)
+void IOTBOT::serialWrite(int value) // Overloaded function for int / `int` için fonksiyon
 {
   Serial.println(String(value).c_str());
 }
 
-// Overloaded function for float / `float` için fonksiyon
-void IOTBOT::serialWrite(float value)
+void IOTBOT::serialWrite(float value) // Overloaded function for float / `float` için fonksiyon
 {
   Serial.println(String(value).c_str());
 }
 
-// Overloaded function for bool / `bool` için fonksiyon
-void IOTBOT::serialWrite(bool value)
+void IOTBOT::serialWrite(bool value) // Overloaded function for bool / `bool` için fonksiyon
 {
   Serial.println(value ? "true" : "false");
 }
@@ -209,32 +204,28 @@ void IOTBOT::lcdWriteMid(const char *line1, const char *line2, const char *line3
   lcd.setCursor(startCol4, 3); // Line 3
   lcd.print(line4);
 }
-// Overloaded function for const char* / `const char*` için fonksiyon
-void IOTBOT::lcdWrite(const char *text)
+
+void IOTBOT::lcdWrite(const char *text) // Overloaded function for const char* / `const char*` için fonksiyon
 {
   lcd.print(text);
 }
 
-// Overloaded function for String / `String` için özel fonksiyon
-void IOTBOT::lcdWrite(String text)
+void IOTBOT::lcdWrite(String text) // Overloaded function for String / `String` için özel fonksiyon
 {
   lcd.print(text.c_str()); // Convert String to const char*
 }
 
-// Overloaded function for int / `int` için fonksiyon
 void IOTBOT::lcdWrite(int value)
 {
   lcd.print(String(value));
 }
 
-// Overloaded function for float / `float` için fonksiyon
-void IOTBOT::lcdWrite(float value)
+void IOTBOT::lcdWrite(float value) // Overloaded function for float / `float` için fonksiyon
 {
   lcd.print(String(value));
 }
 
-// Overloaded function for bool / `bool` için fonksiyon
-void IOTBOT::lcdWrite(bool value)
+void IOTBOT::lcdWrite(bool value) // Overloaded function for bool / `bool` için fonksiyon
 {
   lcd.print(value ? "true" : "false");
 }
@@ -764,7 +755,7 @@ void IOTBOT::initializeDht(int pin, uint8_t type)
   }
 }
 
-int IOTBOT::moduleDhtTempRead(int pin) // Read Temperature
+int IOTBOT::moduleDhtTempReadC(int pin) // Read Temperature
 {
   initializeDht(pin, DHT11); // Ensure DHT11 is initialized
   float temp = dhtSensor->readTemperature();
@@ -775,18 +766,7 @@ int IOTBOT::moduleDhtTempRead(int pin) // Read Temperature
   return static_cast<int>(temp);
 }
 
-int IOTBOT::moduleDhtHumRead(int pin) // Read Humidity
-{
-  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
-  float hum = dhtSensor->readHumidity();
-
-  if (isnan(hum)) // Check if reading failed
-    return -999;
-
-  return static_cast<int>(hum);
-}
-
-int IOTBOT::moduleDthFeelingTemp(int pin) // Calculate Heat Index (Feeling Temperature)
+int IOTBOT::moduleDthFeelingTempC(int pin) // Calculate Heat Index (Feeling Temperature)
 {
   initializeDht(pin, DHT11); // Ensure DHT11 is initialized
 
@@ -800,6 +780,41 @@ int IOTBOT::moduleDthFeelingTemp(int pin) // Calculate Heat Index (Feeling Tempe
   return static_cast<int>(heatIndex);
 }
 
+int IOTBOT::moduleDhtTempReadF(int pin) // Read Temperature in Fahrenheit
+{
+  initializeDht(pin, DHT11);                     // Ensure DHT11 is initialized
+  float temp = dhtSensor->readTemperature(true); // **Fahrenheit sıcaklık okuma**
+
+  if (isnan(temp)) // Check if reading failed
+    return -999;
+
+  return static_cast<int>(temp);
+}
+
+int IOTBOT::moduleDthFeelingTempF(int pin) // Calculate Heat Index (Feeling Temperature in Fahrenheit)
+{
+  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
+
+  float temp = dhtSensor->readTemperature(true); // **Fahrenheit sıcaklık okuma**
+  float hum = dhtSensor->readHumidity();         // **Nem okuma**
+
+  if (isnan(temp) || isnan(hum)) // Check if readings failed
+    return -999;
+
+  float heatIndex = dhtSensor->computeHeatIndex(temp, hum, true); // **Fahrenheit olarak hissedilen sıcaklık hesapla**
+  return static_cast<int>(heatIndex);
+}
+
+int IOTBOT::moduleDhtHumRead(int pin) // Read Humidity
+{
+  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
+  float hum = dhtSensor->readHumidity();
+
+  if (isnan(hum)) // Check if reading failed
+    return -999;
+
+  return static_cast<int>(hum);
+}
 /*********************************** NTC Temp Sensor ***********************************
  * Reads the NTC temperature sensor value and calculates the temperature in Celsius.
  * pin: The analog pin where the NTC is connected.
@@ -1201,6 +1216,41 @@ void IOTBOT::moduleRelayWrite(int pin, bool status)
   digitalWrite(pin, status);
 }
 
+/*********************************** RFID Sensor ***********************************
+ */
+void IOTBOT::beginRFID()
+{
+  SPI.begin();            // SPI başlat
+  rfid.PCD_Init();        // RFID başlat
+  rfidInitialized = true; // RFID'nin başlatıldığını işaretle / Mark RFID as initialized
+}
+
+int IOTBOT::moduleRFIDRead()
+{
+  // Eğer RFID başlatılmadıysa, otomatik başlat / If RFID is not initialized, initialize it
+  if (!rfidInitialized)
+  {
+    beginRFID();
+  }
+
+  String rfidNum = "";
+
+  if (!rfid.PICC_IsNewCardPresent())
+    return 0;
+  if (!rfid.PICC_ReadCardSerial())
+    return 0;
+
+  for (byte i = 0; i < 4; i++)
+  {
+    rfidNum += String(rfid.uid.uidByte[i]);
+  }
+
+  rfid.PICC_HaltA();
+  rfid.PCD_StopCrypto1();
+
+  return rfidNum.toInt();
+}
+
 /*********************************** OTHER PINS ***********************************
  */
 int IOTBOT::analogReadPin(int pin)
@@ -1229,4 +1279,175 @@ void IOTBOT::digitalWritePin(int pin, bool value)
 {
   pinMode(pin, OUTPUT);
   digitalWrite(pin, value);
+}
+
+/*********************************** WiFi ***********************************/
+void IOTBOT::wifiStartAndConnect(const char *ssid, const char *pass)
+{
+  Serial.printf("[WiFi]: Connection Starting!\r\n[WiFi]: SSID: %s\r\n[WiFi]: Pass: %s\r\n", ssid, pass);
+
+  WiFi.begin(ssid, pass);
+  int count = 0;
+  while (count < 30)
+  {
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      Serial.printf("[WiFi]: Connected!\r\n[WiFi]: Local IP: %s\r\n", WiFi.localIP().toString().c_str());
+      Serial.printf("[WiFi]: MAC Address: %s\r\n", WiFi.macAddress().c_str());
+      return;
+    }
+    Serial.print(".");
+    delay(500);
+    count++;
+  }
+  Serial.println("[WiFi]: Connection Timeout!");
+}
+
+bool IOTBOT::wifiConnectionControl()
+{
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    Serial.println("[WiFi]: Connection OK!");
+    return true;
+  }
+  else
+  {
+    Serial.println("[WiFi]: Connection ERROR!");
+    return false;
+  }
+}
+
+String IOTBOT::wifiGetMACAddress()
+{
+  return WiFi.macAddress();
+}
+
+String IOTBOT::wifiGetIPAddress()
+{
+  return WiFi.localIP().toString();
+}
+
+/*********************************** Server ***********************************/
+void IOTBOT::serverStart(const char *mode, const char *ssid, const char *password)
+{
+  if (strcmp(mode, "STA") == 0)
+  {
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(ssid, password);
+
+    Serial.printf("[STA Mode]: Connecting to WiFi: %s\n", ssid);
+
+    int retries = 30;
+    while (WiFi.status() != WL_CONNECTED && retries > 0)
+    {
+      delay(1000);
+      Serial.print(".");
+      retries--;
+    }
+
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      Serial.println("\n[STA Mode]: Connected!");
+      Serial.printf("[STA Mode]: IP Address: http://%s\n", WiFi.localIP().toString().c_str());
+    }
+    else
+    {
+      Serial.println("\n[STA Mode]: Connection Failed! Switching to AP Mode...");
+      serverStart("AP", ssid, password);
+      return;
+    }
+  }
+  else if (strcmp(mode, "AP") == 0)
+  {
+    WiFi.softAP(ssid, password);
+    WiFi.softAPConfig(IPAddress(192, 168, 4, 1), IPAddress(192, 168, 4, 1), IPAddress(255, 255, 255, 0));
+    dnsServer.start(53, "*", IPAddress(192, 168, 4, 1));
+
+    Serial.printf("[AP Mode]: Access Point Started!\n");
+    Serial.printf("[AP Mode]: SSID: \"%s\"\n", ssid);
+    Serial.printf("[AP Mode]: Password: \"%s\"\n", password);
+    Serial.printf("[AP Mode]: AP IP Address: http://%s\n", WiFi.softAPIP().toString().c_str());
+  }
+
+  // 📌 Sayfaları tanımla
+  serverCODROB.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+                  {
+      Serial.println("[Local Server]: Root URL Accessed!");
+      request->send(200, "text/plain", "ESP32 Server is Running!"); });
+
+  // 📌 404 Hatası
+  serverCODROB.onNotFound([](AsyncWebServerRequest *request)
+                          {
+      Serial.println("[Local Server]: Received an Unknown Request!");
+      request->send(404, "text/plain", "Not Found"); });
+
+  // 📌 **WebSocket Olaylarını Bağla**
+  serverCODROBWebSocket.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
+                                {
+      if (type == WS_EVT_CONNECT) {
+          Serial.println("WebSocket Client Connected");
+      } else if (type == WS_EVT_DISCONNECT) {
+          Serial.println("WebSocket Client Disconnected");
+      } });
+
+  // 📌 WebSocket'i Sunucuya Bağla
+  serverCODROB.addHandler(&serverCODROBWebSocket);
+
+  // 📌 **En son sunucuyu başlat!**
+  serverCODROB.begin();
+  Serial.println("[Local Server]: Server Started! ✅");
+}
+
+void IOTBOT::serverCreateLocalPage(const char *url, const char *WEBPageScript, const char *WEBPageCSS, const char *WEBPageHTML)
+{
+  // 📌 Sayfa içeriğini oluştur
+  serverCODROB.on(("/" + String(url)).c_str(), HTTP_GET, [WEBPageScript, WEBPageCSS, WEBPageHTML](AsyncWebServerRequest *request)
+                  {
+        char buffer[4096]; // **Buffer Boyutu**: 4096 bayt (Daha büyük içerikleri destekler)
+        int len = snprintf(buffer, sizeof(buffer), WEBPageHTML, WEBPageScript, WEBPageCSS);
+        if (len >= sizeof(buffer)) {
+            Serial.println("[ERROR]: Buffer size insufficient, content truncated!");
+        }
+        request->send(200, "text/html", buffer); });
+
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    Serial.printf("[Local Server]: Page created at: http://%s/%s\n", WiFi.localIP().toString().c_str(), url);
+  }
+  else
+  {
+    Serial.printf("[Local Server]: Page created at: http://%s/%s\n", apIP.toString().c_str(), url);
+  }
+}
+
+void IOTBOT::serverHandleDNS()
+{
+  dnsServer.processNextRequest();
+}
+
+void IOTBOT::serverContinue()
+{
+  if (WiFi.getMode() == WIFI_AP)
+  {
+    serverHandleDNS();
+  }
+}
+
+/*********************************** EEPROM  ***********************************
+ */
+void IOTBOT::eepromWriteInt(int address, int value) // EEPROM'a güvenli bir şekilde int türünde veri yazmak için fonksiyon
+{
+  byte highByte = highByte(value); // int'in yüksek baytını al
+  byte lowByte = lowByte(value);   // int'in düşük baytını al
+
+  EEPROM.write(address, highByte);    // İlk baytı EEPROM'a yaz
+  EEPROM.write(address + 1, lowByte); // İkinci baytı EEPROM'a yaz
+  EEPROM.commit();                    // Değişiklikleri kaydetmek için commit işlemi yapılmalıdır
+}
+
+int IOTBOT::eepromReadInt(int address) // EEPROM'dan int türünde veri okumak için fonksiyon
+{
+  byte highByte = EEPROM.read(address);    // İlk baytı oku
+  byte lowByte = EEPROM.read(address + 1); // İkinci baytı oku
+  return word(highByte, lowByte);          // Yüksek ve düşük baytları birleştirerek int değeri oluştur
 }
