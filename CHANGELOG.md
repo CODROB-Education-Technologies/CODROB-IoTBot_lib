@@ -1,5 +1,13 @@
 # Changelog
 
+
+## [1.2.2] - 2025-02-03
+### Added
+- Firebase Fonskiyonları eklendi. 
+
+### Fixed 
+- Açıklamalar düzeltildi. 
+
 ## [1.2.1] - 2025-01-31
 ### Added
 - RFID Kütüphanesi eklendi 

@@ -1281,6 +1281,25 @@ void IOTBOT::digitalWritePin(int pin, bool value)
   digitalWrite(pin, value);
 }
 
+/*********************************** EEPROM  ***********************************
+ */
+void IOTBOT::eepromWriteInt(int address, int value) // EEPROM'a güvenli bir şekilde int türünde veri yazmak için fonksiyon
+{
+  byte highByte = highByte(value); // int'in yüksek baytını al
+  byte lowByte = lowByte(value);   // int'in düşük baytını al
+
+  EEPROM.write(address, highByte);    // İlk baytı EEPROM'a yaz
+  EEPROM.write(address + 1, lowByte); // İkinci baytı EEPROM'a yaz
+  EEPROM.commit();                    // Değişiklikleri kaydetmek için commit işlemi yapılmalıdır
+}
+
+int IOTBOT::eepromReadInt(int address) // EEPROM'dan int türünde veri okumak için fonksiyon
+{
+  byte highByte = EEPROM.read(address);    // İlk baytı oku
+  byte lowByte = EEPROM.read(address + 1); // İkinci baytı oku
+  return word(highByte, lowByte);          // Yüksek ve düşük baytları birleştirerek int değeri oluştur
+}
+
 /*********************************** WiFi ***********************************/
 void IOTBOT::wifiStartAndConnect(const char *ssid, const char *pass)
 {
@@ -1433,21 +1452,220 @@ void IOTBOT::serverContinue()
   }
 }
 
-/*********************************** EEPROM  ***********************************
- */
-void IOTBOT::eepromWriteInt(int address, int value) // EEPROM'a güvenli bir şekilde int türünde veri yazmak için fonksiyon
-{
-  byte highByte = highByte(value); // int'in yüksek baytını al
-  byte lowByte = lowByte(value);   // int'in düşük baytını al
+/*********************************** Firebase Server Functions ***********************************/
 
-  EEPROM.write(address, highByte);    // İlk baytı EEPROM'a yaz
-  EEPROM.write(address + 1, lowByte); // İkinci baytı EEPROM'a yaz
-  EEPROM.commit();                    // Değişiklikleri kaydetmek için commit işlemi yapılmalıdır
+// Initialize Firebase connection
+void IOTBOT::fbServerSetandStart(String projectURL, String secretKey)
+{
+  firebaseData.setResponseSize(1024); // Optimize memory usage by setting response size
+
+  // Firebase Configuration Settings
+  firebaseConfig.api_key = secretKey;
+  firebaseConfig.database_url = projectURL;
+
+  // Zaman aşımı ayarları
+  firebaseConfig.timeout.socketConnection = 10 * 1000; // 10 saniye bağlantı zaman aşımı
+
+  // Token durumu izleme ayarı
+  firebaseConfig.token_status_callback = tokenStatusCallback;
+  firebaseConfig.max_token_generation_retry = 3; // Maksimum token yenileme denemesi
+
+  // Start Firebase connection
+  Firebase.begin(&firebaseConfig, &firebaseAuth);
+
+  // Enable automatic reconnection if Wi-Fi drops
+  Firebase.reconnectWiFi(true);
+
+  Serial.println("[Firebase]: Server initialized successfully.");
 }
 
-int IOTBOT::eepromReadInt(int address) // EEPROM'dan int türünde veri okumak için fonksiyon
+// User verification with email and password
+bool IOTBOT::fbServerUserVerification(String userMail, String mailPass)
 {
-  byte highByte = EEPROM.read(address);    // İlk baytı oku
-  byte lowByte = EEPROM.read(address + 1); // İkinci baytı oku
-  return word(highByte, lowByte);          // Yüksek ve düşük baytları birleştirerek int değeri oluştur
+  firebaseAuth.user.email = userMail;
+  firebaseAuth.user.password = mailPass;
+
+  Serial.println("[Firebase]: Verifying user credentials...");
+  uint8_t attempts = 0;
+
+  while (firebaseAuth.token.uid == "" && attempts < 50)
+  {
+    Serial.print('.');
+    delay(500);
+    attempts++;
+  }
+
+  if (firebaseAuth.token.uid == "")
+  {
+    Serial.println("\n[ERROR]: Authentication timeout.");
+    return false;
+  }
+  else
+  {
+    if (Firebase.ready())
+    {
+      Serial.print("\n[Firebase]: User verified successfully. UID: ");
+      Serial.println(uid);
+      return true;
+    }
+  }
+  return false;
+}
+
+/*********************************** Firebase Write Functions ***********************************/
+
+void IOTBOT::fbServerSetInt(const char *dataPath, int data)
+{
+  // Corrected function call
+  if (Firebase.RTDB.setInt(&firebaseData, dataPath, data))
+  {
+    Serial.println("[SUCCESS]: Integer data sent successfully!");
+  }
+  else
+  {
+    Serial.print("[ERROR]: Failed to send integer data. ");
+    Serial.printf("HTTP Code: %d\n", firebaseData.httpCode());
+    Serial.println("Reason: " + firebaseData.errorReason());
+  }
+}
+
+void IOTBOT::fbServerSetFloat(const char *dataPath, float data)
+{
+  if (Firebase.RTDB.setFloat(&firebaseData, dataPath, data))
+  {
+    Serial.println("[SUCCESS]: Float data sent successfully!");
+  }
+  else
+  {
+    Serial.print("[ERROR]: Failed to send float data. ");
+    Serial.printf("HTTP Code: %d\n", firebaseData.httpCode());
+    Serial.println("Reason: " + firebaseData.errorReason());
+  }
+}
+
+void IOTBOT::fbServerSetString(const char *dataPath, String data)
+{
+  if (Firebase.RTDB.setString(&firebaseData, dataPath, data))
+  {
+    Serial.println("[SUCCESS]: String data sent successfully!");
+  }
+  else
+  {
+    Serial.print("[ERROR]: Failed to send string data. ");
+    Serial.printf("HTTP Code: %d\n", firebaseData.httpCode());
+    Serial.println("Reason: " + firebaseData.errorReason());
+  }
+}
+
+void IOTBOT::fbServerSetDouble(const char *dataPath, double data)
+{
+  if (Firebase.RTDB.setDouble(&firebaseData, dataPath, data))
+  {
+    Serial.println("[SUCCESS]: Double data sent successfully!");
+  }
+  else
+  {
+    Serial.print("[ERROR]: Failed to send double data. ");
+    Serial.printf("HTTP Code: %d\n", firebaseData.httpCode());
+    Serial.println("Reason: " + firebaseData.errorReason());
+  }
+}
+
+void IOTBOT::fbServerSetBool(const char *dataPath, bool data)
+{
+  if (Firebase.RTDB.setBool(&firebaseData, dataPath, data))
+  {
+    Serial.println("[SUCCESS]: Boolean data sent successfully!");
+  }
+  else
+  {
+    Serial.print("[ERROR]: Failed to send boolean data. ");
+    Serial.printf("HTTP Code: %d\n", firebaseData.httpCode());
+    Serial.println("Reason: " + firebaseData.errorReason());
+  }
+}
+
+void IOTBOT::fbServerSetJSON(const char *dataPath, String data)
+{
+  FirebaseJson json;
+  json.set(dataPath, data);
+
+  if (Firebase.RTDB.setJSON(&firebaseData, dataPath, &json))
+  {
+    Serial.println("[SUCCESS]: JSON data sent successfully!");
+  }
+  else
+  {
+    Serial.print("[ERROR]: Failed to send JSON data. ");
+    Serial.printf("HTTP Code: %d\n", firebaseData.httpCode());
+    Serial.println("Reason: " + firebaseData.errorReason());
+  }
+}
+
+/*********************************** Firebase Read Functions ***********************************/
+
+int IOTBOT::fbServerGetInt(const char *dataPath)
+{
+  if (Firebase.RTDB.getInt(&firebaseData, dataPath))
+  {
+    Serial.println("[SUCCESS]: Integer data retrieved successfully!");
+    return firebaseData.intData();
+  }
+  Serial.println("[ERROR]: Failed to retrieve integer data.");
+  return -1;
+}
+
+float IOTBOT::fbServerGetFloat(const char *dataPath)
+{
+  if (Firebase.RTDB.getFloat(&firebaseData, dataPath))
+  {
+    Serial.println("[SUCCESS]: Float data retrieved successfully!");
+    return firebaseData.floatData();
+  }
+  Serial.println("[ERROR]: Failed to retrieve float data.");
+  return -1.0;
+}
+
+String IOTBOT::fbServerGetString(const char *dataPath)
+{
+  if (Firebase.RTDB.getString(&firebaseData, dataPath))
+  {
+    Serial.println("[SUCCESS]: String data retrieved successfully!");
+    return firebaseData.stringData();
+  }
+  Serial.println("[ERROR]: Failed to retrieve string data.");
+  return "";
+}
+
+double IOTBOT::fbServerGetDouble(const char *dataPath)
+{
+  if (Firebase.RTDB.getDouble(&firebaseData, dataPath))
+  {
+    Serial.println("[SUCCESS]: Double data retrieved successfully!");
+    return firebaseData.doubleData();
+  }
+  Serial.println("[ERROR]: Failed to retrieve double data.");
+  return -1.0;
+}
+
+bool IOTBOT::fbServerGetBool(const char *dataPath)
+{
+  if (Firebase.RTDB.getBool(&firebaseData, dataPath))
+  {
+    Serial.println("[SUCCESS]: Boolean data retrieved successfully!");
+    return firebaseData.boolData();
+  }
+  Serial.println("[ERROR]: Failed to retrieve boolean data.");
+  return false;
+}
+
+String IOTBOT::fbServerGetJSON(const char *dataPath)
+{
+  if (Firebase.RTDB.getJSON(&firebaseData, dataPath))
+  {
+    Serial.println("[SUCCESS]: JSON data retrieved successfully!");
+    return firebaseData.jsonString();
+  }
+  Serial.println("[ERROR]: Failed to retrieve JSON data.");
+  return "{}";
 }
