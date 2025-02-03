@@ -1454,62 +1454,118 @@ void IOTBOT::serverContinue()
 
 /*********************************** Firebase Server Functions ***********************************/
 
-// Initialize Firebase connection
-void IOTBOT::fbServerSetandStart(String projectURL, String secretKey)
+// Initialize Firebase connection with SignUp Authentication
+void IOTBOT::fbServerSetandStart(const char *projectURL, const char *secretKey, const char *userMail, const char *mailPass)
 {
-  firebaseData.setResponseSize(1024); // Optimize memory usage by setting response size
+  firebaseData.setResponseSize(1024); // Optimize memory usage
 
   // Firebase Configuration Settings
   firebaseConfig.api_key = secretKey;
   firebaseConfig.database_url = projectURL;
+  firebaseAuth.user.email = userMail;
+  firebaseAuth.user.password = mailPass;
 
   // Zaman aşımı ayarları
   firebaseConfig.timeout.socketConnection = 10 * 1000; // 10 saniye bağlantı zaman aşımı
 
   // Token durumu izleme ayarı
   firebaseConfig.token_status_callback = tokenStatusCallback;
-  firebaseConfig.max_token_generation_retry = 3; // Maksimum token yenileme denemesi
+  firebaseConfig.max_token_generation_retry = 5; // Daha fazla token yenileme denemesi
 
-  // Start Firebase connection
-  Firebase.begin(&firebaseConfig, &firebaseAuth);
-
-  // Enable automatic reconnection if Wi-Fi drops
+  // Wi-Fi bağlantısı kaybolduğunda otomatik yeniden bağlanma
   Firebase.reconnectWiFi(true);
 
-  Serial.println("[Firebase]: Server initialized successfully.");
-}
-
-// User verification with email and password
-bool IOTBOT::fbServerUserVerification(String userMail, String mailPass)
-{
-  firebaseAuth.user.email = userMail;
-  firebaseAuth.user.password = mailPass;
+  // Firebase başlat
+  Firebase.begin(&firebaseConfig, &firebaseAuth);
 
   Serial.println("[Firebase]: Verifying user credentials...");
-  uint8_t attempts = 0;
-
-  while (firebaseAuth.token.uid == "" && attempts < 50)
+  uint8_t id_count = 0;
+  while (firebaseAuth.token.uid == "" && id_count < 50)
   {
     Serial.print('.');
     delay(500);
-    attempts++;
+    id_count++;
   }
-
   if (firebaseAuth.token.uid == "")
   {
     Serial.println("\n[ERROR]: Authentication timeout.");
-    return false;
   }
   else
   {
     if (Firebase.ready())
     {
-      Serial.print("\n[Firebase]: User verified successfully. UID: ");
+      strncpy(uid, firebaseAuth.token.uid.c_str(), 128 - 1); // UID'yi kopyala ve taşma kontrolü yap
+      uid[128 - 1] = '\0';                                   // Diziyi null karakter ile sonlandır
+      Serial.print("\n[Info]: Doğrulanan Kimlik ID: ");
       Serial.println(uid);
-      return true;
+    }
+    else
+    {
+      Serial.print("[ERROR]: Sign-up failed. Reason: ");
+      Serial.println(firebaseData.errorReason());
     }
   }
-  return false;
+}
+
+// Initialize Firebase connection with SignUp Authentication
+void IOTBOT::fbServerSetStartSingUp(const char *projectURL, const char *secretKey, const char *userMail, const char *mailPass)
+{
+  firebaseData.setResponseSize(1024); // Optimize memory usage
+
+  // Firebase Configuration Settings
+  firebaseConfig.api_key = secretKey;
+  firebaseConfig.database_url = projectURL;
+
+  firebaseAuth.user.email = userMail;
+  firebaseAuth.user.password = mailPass;
+
+  // Zaman aşımı ayarları
+  firebaseConfig.timeout.socketConnection = 10 * 1000; // 10 saniye bağlantı zaman aşımı
+
+  // Token durumu izleme ayarı
+  firebaseConfig.token_status_callback = tokenStatusCallback;
+  firebaseConfig.max_token_generation_retry = 5; // Daha fazla token yenileme denemesi
+
+  // Wi-Fi bağlantısı kaybolduğunda otomatik yeniden bağlanma
+  Firebase.reconnectWiFi(true);
+
+  Serial.println("[Firebase]: Starting connection...");
+
+  // Kullanıcı oturum açma işlemi (sign-up)
+  if (Firebase.signUp(&firebaseConfig, &firebaseAuth, userMail, mailPass))
+  {
+    Serial.println("[Firebase]: Sign-up successful.");
+
+    // Bağlantının hazır olup olmadığını kontrol et
+    uint8_t attempts = 0;
+    while (!Firebase.ready() && attempts < 20)
+    {
+      Serial.print('.');
+      delay(500);
+      attempts++;
+    }
+
+    if (Firebase.ready())
+    {
+      // UID'yi kopyala ve taşma kontrolü yap
+      strncpy(uid, firebaseAuth.token.uid.c_str(), 128 - 1);
+      uid[128 - 1] = '\0'; // Null karakter ile sonlandır
+
+      Serial.println("\n✅ Firebase Authentication Successful!");
+      Serial.print("UID: ");
+      Serial.println(uid);
+    }
+    else
+    {
+      Serial.println("\n[ERROR]: Authentication timeout.");
+    }
+  }
+  else
+  {
+    // Hata durumunda ayrıntılı hata mesajı yazdır
+    Serial.print("[ERROR]: Sign-up failed. Reason: ");
+    Serial.println(firebaseData.errorReason());
+  }
 }
 
 /*********************************** Firebase Write Functions ***********************************/

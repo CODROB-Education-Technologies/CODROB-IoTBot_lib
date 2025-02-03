@@ -237,8 +237,8 @@ public:
   /*********************************** Firebase Server  ***********************************
    */
   // 📡 Firebase Server Functions
-  void fbServerSetandStart(String projectURL, String secretKey);   // projectURL: YOUR_FIREBASE_PROJECT_ID.firebaseio.com / secretKey: YOUR_FIREBASE_DATABASE_SECRET
-  bool fbServerUserVerification(String userMail, String mailPass); // userMail: User mail / mailPass: mail password
+  void fbServerSetandStart(const char *projectURL, const char *secretKey, const char *userMail, const char *mailPass);    // projectURL: YOUR_FIREBASE_PROJECT_ID.firebaseio.com / secretKey: YOUR_FIREBASE_DATABASE_SECRET
+  void fbServerSetStartSingUp(const char *projectURL, const char *secretKey, const char *userMail, const char *mailPass); // projectURL: YOUR_FIREBASE_PROJECT_ID.firebaseio.com / secretKey: YOUR_FIREBASE_DATABASE_SECRET
 
   // 🔄 Firebase Database Write Functions
   void fbServerSetInt(const char *dataPath, int data);

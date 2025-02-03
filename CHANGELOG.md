@@ -1,5 +1,8 @@
 # Changelog
+## [1.2.3] - 2025-02-03
 
+### Fixed 
+- Firebase fonksiyonları düzeltildi. 
 
 ## [1.2.2] - 2025-02-03
 ### Added
