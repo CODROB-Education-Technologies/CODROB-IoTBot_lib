@@ -2,17 +2,17 @@
 
 IOTBOT iotbot;
 
-// 🔑 Firebase Configuration
-#define FIREBASE_PROJECT_URL "https://smart-sound-001-default-rtdb.europe-west1.firebasedatabase.app/"
-#define FIREBASE_API_KEY "AIzaSyAiAv2SvCZzX6xSqgFVkNfqXU1vm4aEuNQ"
+// 🔑 Firebase Configuration | 🔑 Firebase Yapılandırması
+#define FIREBASE_PROJECT_URL "FIREBASE_PROJECT_URL" // Enter the Firebase server URL here. | Buraya Firebase sunucusunun linkini yazınız.
+#define FIREBASE_API_KEY "FIREBASE_API_KEY"         // Enter the Firebase server API key here. | Buraya Firebase sunucusunun API anahtarını yazınız.
 
-// 📧 Firebase User Authentication
-#define USER_EMAIL "kaya.samed@outlook.com"
-#define USER_PASSWORD "SamCo1234"
+// 📧 Firebase User Authentication | 📧 Firebase Kullanıcı Kimlik Doğrulama
+#define USER_EMAIL "xxxxx@xxxxx.com" // Enter the email address used to create the Firebase user here. | Buraya Firebase sunucusunda oluşturduğunuz kullanıcı e-posta adresini yazınız.
+#define USER_PASSWORD "PASSS"        // Enter the password for the Firebase user here. | Buraya Firebase sunucusunda oluşturduğunuz kullanıcı şifresini yazınız.
 
-// 📧 WiFi Settings
-#define WIFI_SSID "INTERNET"
-#define WiFi_PASS "INTERNET_2022"
+// 📡 WiFi Settings | 📡 WiFi Ayarları
+#define WIFI_SSID "WIFI_SSID" // Enter the name of the Wi-Fi network you want to connect to here. | Buraya bağlanmak istediğiniz Wi-Fi ağının adını yazınız.
+#define WIFI_PASS "WiFi_PASS" // Enter the password of the Wi-Fi network you want to connect to here. | Buraya bağlanmak istediğiniz Wi-Fi ağının şifresini yazınız.
 
 void setup()
 {

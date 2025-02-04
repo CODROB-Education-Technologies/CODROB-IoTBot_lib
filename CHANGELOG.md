@@ -1,9 +1,8 @@
 # Changelog
-## [1.2.5] - 2025-02-04
+## [1.3.0] - 2025-02-04
 ### Fixed 
 - Firebase fonksiyonları düzeltildi. 
 - Örnek uygulamalarda lcdmid fonksiyonları düzeltildi. 
-
 
 ## [1.2.3] - 2025-02-03
 
