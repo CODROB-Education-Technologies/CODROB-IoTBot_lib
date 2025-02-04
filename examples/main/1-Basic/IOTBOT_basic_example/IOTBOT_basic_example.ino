@@ -52,7 +52,11 @@ void loop()
 
     // 🔵 **LCD Güncelle - Mevcut Durum / Update LCD - Current Step**
     iotbot.lcdClear();
-    iotbot.lcdWriteMid("IoTBot Disco!", "Step: " + String(i + 1), "LED: " + String(currentLed), "Tone: " + String(ritimTonlari[i]) + " Hz");
+    iotbot.lcdWriteMid(
+        "IoTBot Disco!",
+        ("Step: " + String(i + 1)).c_str(),
+        ("LED: " + String(currentLed)).c_str(),
+        ("Tone: " + String(ritimTonlari[i]) + " Hz").c_str());
 
     // 🔻 **Bekleme Süresi ve LED Kapatma / Wait Time and Turn Off LED**
     delay(delayTimes[i]);

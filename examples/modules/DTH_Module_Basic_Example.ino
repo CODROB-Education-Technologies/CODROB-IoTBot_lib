@@ -28,7 +28,7 @@ void setup()
 
 void loop()
 {
-    int temperature = iotbot.moduleDhtTempRead(SENSOR_PIN);
+    int temperature = iotbot.moduleDhtTempReadC(SENSOR_PIN);
     // DHT sensöründen sıcaklık verisini oku / Read temperature data from the DHT sensor
 
     int humidity = iotbot.moduleDhtHumRead(SENSOR_PIN);
@@ -44,8 +44,11 @@ void loop()
 
     iotbot.lcdClear(); // LCD ekranını temizle / Clear the LCD screen
 
-    iotbot.lcdWriteMid("DHT Sensor", "Temp: " + String(temperature) + "°C", "Humidity: " + String(humidity) + "%", "");
-    // LCD'ye sıcaklık ve nem değerlerini yazdır / Display temperature and humidity values on the LCD
+    iotbot.lcdWriteMid(
+        "DHT Sensor",
+        ("Temp: " + String(temperature) + "°C").c_str(),
+        ("Humidity: " + String(humidity) + "%").c_str(),
+        ""); // LCD'ye sıcaklık ve nem değerlerini yazdır / Display temperature and humidity values on the LCD
 
     delay(2000);
     // Yeni veri okumadan önce 2 saniye bekle / Wait for 2 seconds before reading new data

@@ -3,15 +3,15 @@
 IOTBOT iotbot;
 
 // 🔑 Firebase Configuration
-#define FIREBASE_PROJECT_URL "FIREBASE_PROJECT_URL.firebasedatabase.app/"
-#define FIREBASE_API_KEY "FIREBASE_API_KEY"
+#define FIREBASE_PROJECT_URL "https://smart-sound-001-default-rtdb.europe-west1.firebasedatabase.app/"
+#define FIREBASE_API_KEY "AIzaSyAiAv2SvCZzX6xSqgFVkNfqXU1vm4aEuNQ"
 
 // 📧 Firebase User Authentication
-#define USER_EMAIL "USER_EMAIL"
-#define USER_PASSWORD "USER_PASSWORD"
+#define USER_EMAIL "kaya.samed@outlook.com"
+#define USER_PASSWORD "SamCo1234"
 
 // 📧 WiFi Settings
-#define WiFi "INTERNET"
+#define WIFI_SSID "INTERNET"
 #define WiFi_PASS "INTERNET_2022"
 
 void setup()
@@ -20,14 +20,12 @@ void setup()
     Serial.println("🚀 IoTBot Firebase Example Starting...");
 
     // 🔗 Step 1: Connect to Wi-Fi
-    iotbot.wifiStartAndConnect(WiFi, WiFi_PASS);
+    iotbot.wifiStartAndConnect(WIFI_SSID, WiFi_PASS);
 
     // 🔥 Step 2: Initialize Firebase
-    iotbot.fbServerSetandStart(FIREBASE_PROJECT_URL, FIREBASE_API_KEY, USER_EMAIL, USER_PASSWORD);
-    // iotbot.fbServerSetStartSingUp(FIREBASE_PROJECT_URL, FIREBASE_API_KEY, USER_EMAIL, USER_PASSWORD);
+    iotbot.fbServerSetandStartWithUser(FIREBASE_PROJECT_URL, FIREBASE_API_KEY, USER_EMAIL, USER_PASSWORD);
 
-    String Online = "Online";
-    // ✍️ Step 4: Send Data to Firebase
+    // ✍️ Step 3: Send Data to Firebase
     iotbot.fbServerSetInt("/device/temperature", 25);
     iotbot.fbServerSetString("/device/status", "Online");
     iotbot.fbServerSetBool("/device/active", true);
