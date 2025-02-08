@@ -8,8 +8,8 @@ void setup()
     iotbot.serialStart(115200);
 
     iotbot.lcdClear();
-    iotbot.lcdWriteMid("Joystick Test", "--- IoTBot ---", "Başlatıldı!", "Started!");
-    iotbot.serialWrite("🕹 Joystick testi başlatıldı / Joystick test started.");
+    iotbot.lcdWriteMid("Joystick Test", "--- IoTBot ---", "Baslatildi!", "Started!");
+    iotbot.serialWrite("🕹 Joystick testi baslatildi / Joystick test started.");
 
     delay(3000);
 }

@@ -1,55 +1,57 @@
-#include <IOTBOT.h> // IoTBot kütüphanesi / IoTBot library
+#include <IOTBOT.h> // IoTBot kutuphanesi / IoTBot library
 
-// IoTBot nesnesi oluşturuluyor / Create an IoTBot object
+// IoTBot nesnesi olusturuluyor / Create an IoTBot object
 IOTBOT iotbot;
 
-#define SENSOR_PIN IO27 // DHT sensörünün bağlı olduğu pini seçin / Select the pin connected to the DHT sensor
+#define SENSOR_PIN IO27 // PIR sensorunun bagli oldugu pini secin / Select the pin connected to the PIR sensor
 // Desteklenen pinler: IO25 - IO26 - IO27 - IO32 - IO33
 // Supported pins: IO25 - IO26 - IO27 - IO32 - IO33
 
 void setup()
 {
-    iotbot.begin(); // IoTBot başlatılıyor / Initialize IoTBot
+    iotbot.begin(); // IoTBot baslatiliyor / Initialize IoTBot
 
-    iotbot.serialStart(115200); // Seri haberleşmeyi başlat / Start serial communication
-    // Bilgisayar ile seri haberleşme için 115200 baud hızında başlatılır.
+    iotbot.serialStart(115200); // Seri haberlesmeyi baslat / Start serial communication
+    // Bilgisayar ile seri haberlesme icin 115200 baud hizinda baslatilir.
     // Starts serial communication at 115200 baud for computer connection.
 
-    iotbot.serialWrite("DHT sensör testi başlatıldı / DHT sensor test started.");
-    // Hoşgeldiniz mesajını seri porta yazdır / Display test start message on the serial port
+    iotbot.serialWrite("PIR Sensor Testi Baslatildi / PIR Sensor Test Started.");
+    // PIR sensor testinin basladigini seri porta yazdir / Print PIR sensor test start message to the serial port
 
-    iotbot.lcdClear(); // LCD ekranını temizle / Clear the LCD screen
+    iotbot.lcdClear(); // LCD ekrani temizle / Clear the LCD screen
 
-    iotbot.lcdWriteMid("DHT Sensor", "--- IoTBot ---", "Test Basladi", "Test Started");
-    // LCD'ye test başladığını yazdır / Display test start message on LCD
+    iotbot.lcdWriteMid("PIR Sensor", "--- IoTBot ---", "Test Basladi", "Test Started");
+    // LCD'ye test basladigini yazdir / Display test start message on LCD
 
-    delay(3000); // Başlangıç için bekleme süresi / Initial delay
+    delay(3000); // Baslangic icin bekleme suresi / Initial delay
 }
 
 void loop()
 {
-    int temperature = iotbot.moduleDhtTempReadC(SENSOR_PIN);
-    // DHT sensöründen sıcaklık verisini oku / Read temperature data from the DHT sensor
+    int motionDetected = iotbot.moduleMotionRead(SENSOR_PIN);
+    // PIR sensorunden hareket algilama verisini oku / Read motion detection data from PIR sensor
 
-    int humidity = iotbot.moduleDhtHumRead(SENSOR_PIN);
-    // DHT sensöründen nem verisini oku / Read humidity data from the DHT sensor
+    iotbot.serialWrite("PIR Sensor Durumu / PIR Sensor Status: " + String(motionDetected ? "Hareket Algilandi / Motion Detected" : "Hareket Yok / No Motion"));
+    // Hareket durumu bilgisini seri porta yazdir / Print motion status to serial port
 
-    iotbot.serialWrite("Sıcaklık / Temperature: ");
-    iotbot.serialWrite(temperature);
-    // Sıcaklık değerini seri porta yazdır / Print temperature value to the serial port
+    iotbot.lcdClear(); // LCD ekrani temizle / Clear the LCD screen
 
-    iotbot.serialWrite("Nem / Humidity: ");
-    iotbot.serialWrite(humidity);
-    // Nem değerini seri porta yazdır / Print humidity value to the serial port
+    if (motionDetected)
+    {
+        iotbot.lcdWriteMid("Hareket Algilandi!", "Motion Detected!", "", "");
+        // Eger hareket algilandiysa mesaji LCD ekrana yazdir / Display message on LCD if motion is detected
 
-    iotbot.lcdClear(); // LCD ekranını temizle / Clear the LCD screen
+        iotbot.serialWrite("PIR Sensor Hareket Algiladi! / PIR Sensor Detected Motion!");
+        // Seri porta uyari mesaji yazdir / Print warning message to serial port
+    }
+    else
+    {
+        iotbot.lcdWriteMid("Hareket Yok", "No Motion", "", "");
+        // Eger hareket algilanmadiysa mesaji LCD ekrana yazdir / Display message on LCD if no motion is detected
 
-    iotbot.lcdWriteMid(
-        "DHT Sensor",
-        ("Temp: " + String(temperature) + "°C").c_str(),
-        ("Humidity: " + String(humidity) + "%").c_str(),
-        ""); // LCD'ye sıcaklık ve nem değerlerini yazdır / Display temperature and humidity values on the LCD
+        iotbot.serialWrite("PIR Sensor Hareket Algilamadi / PIR Sensor Detected No Motion");
+        // Seri porta bilgilendirme mesaji yazdir / Print no motion detected message to serial port
+    }
 
-    delay(2000);
-    // Yeni veri okumadan önce 2 saniye bekle / Wait for 2 seconds before reading new data
+    delay(500); // Yeni okuma yapmadan once 500 ms bekle / Wait for 500 ms before reading again
 }

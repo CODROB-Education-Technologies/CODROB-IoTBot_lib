@@ -8,8 +8,8 @@ void setup()
     iotbot.serialStart(115200);
 
     iotbot.lcdClear();
-    iotbot.lcdWriteMid("Encoder Test", "--- IoTBot ---", "Başlatıldı!", "Started!");
-    iotbot.serialWrite("🔄 Encoder testi başlatıldı / Encoder test started.");
+    iotbot.lcdWriteMid("Encoder Test", "--- IoTBot ---", "Baslatildi!", "Started!");
+    iotbot.serialWrite("🔄 Encoder testi baslatildi / Encoder test started.");
 
     delay(3000);
 }
@@ -32,7 +32,7 @@ void loop()
         iotbot.lcdClear();
         iotbot.lcdWriteCR(0, 0, "Encoder Test");
         iotbot.lcdWriteCR(0, 1, "Deger / Value:");
-        iotbot.lcdWriteCR(10, 1, String(encoderValue));
+        iotbot.lcdWriteCR(15, 1, String(encoderValue));
         iotbot.lcdWriteCR(0, 2, "Buton:");
         iotbot.lcdWriteCR(10, 2, buttonStatus ? "BASILI" : "SERBEST");
     }

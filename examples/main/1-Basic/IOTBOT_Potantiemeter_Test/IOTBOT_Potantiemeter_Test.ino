@@ -8,8 +8,8 @@ void setup()
     iotbot.serialStart(115200);
 
     iotbot.lcdClear();
-    iotbot.lcdWriteMid("Potansiyometre", "--- IoTBot ---", "Başlatıldı!", "Started!");
-    iotbot.serialWrite("🎚 Potansiyometre testi başlatıldı / Potentiometer test started.");
+    iotbot.lcdWriteMid("Potansiyometre", "--- IoTBot ---", "Baslatildi!", "Started!");
+    iotbot.serialWrite("🎚 Potansiyometre testi baslatildi / Potentiometer test started.");
 
     delay(3000);
 }
@@ -18,7 +18,7 @@ void loop()
 {
     int potValue = iotbot.potentiometerRead();
 
-    iotbot.serialWrite("🎚 Potansiyometre Değeri / Potentiometer Value: " + String(potValue));
+    iotbot.serialWrite("🎚 Potansiyometre Degeri / Potentiometer Value: " + String(potValue));
 
     iotbot.lcdClear();
     iotbot.lcdWriteCR(0, 0, "Potansiyometre Test");

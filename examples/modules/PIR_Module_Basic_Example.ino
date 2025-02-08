@@ -1,57 +1,57 @@
-#include <IOTBOT.h> // IoTBot kütüphanesi / IoTBot library
+#include <IOTBOT.h> // IoTBot kutuphanesi / IoTBot library
 
-// IoTBot nesnesi oluşturuluyor / Create an IoTBot object
+// IoTBot nesnesi olusturuluyor / Create an IoTBot object
 IOTBOT iotbot;
 
-#define SENSOR_PIN IO27 // PIR sensörünün bağlı olduğu pini seçin / Select the pin connected to the PIR sensor
+#define SENSOR_PIN IO27 // PIR sensorunun bagli oldugu pini secin / Select the pin connected to the PIR sensor
 // Desteklenen pinler: IO25 - IO26 - IO27 - IO32 - IO33
 // Supported pins: IO25 - IO26 - IO27 - IO32 - IO33
 
 void setup()
 {
-    iotbot.begin(); // IoTBot başlatılıyor / Initialize IoTBot
+    iotbot.begin(); // IoTBot baslatiliyor / Initialize IoTBot
 
-    iotbot.serialStart(115200); // Seri haberleşmeyi başlat / Start serial communication
-    // Bilgisayar ile seri haberleşme için 115200 baud hızında başlatılır.
+    iotbot.serialStart(115200); // Seri haberlesmeyi baslat / Start serial communication
+    // Bilgisayar ile seri haberlesme icin 115200 baud hizinda baslatilir.
     // Starts serial communication at 115200 baud for computer connection.
 
-    iotbot.serialWrite("PIR Sensör Testi Başlatıldı / PIR Sensor Test Started.");
-    // PIR sensör testinin başladığını seri porta yazdır / Print PIR sensor test start message to the serial port
+    iotbot.serialWrite("PIR Sensor Testi Baslatildi / PIR Sensor Test Started.");
+    // PIR sensor testinin basladigini seri porta yazdir / Print PIR sensor test start message to the serial port
 
-    iotbot.lcdClear(); // LCD ekranı temizle / Clear the LCD screen
+    iotbot.lcdClear(); // LCD ekrani temizle / Clear the LCD screen
 
     iotbot.lcdWriteMid("PIR Sensor", "--- IoTBot ---", "Test Basladi", "Test Started");
-    // LCD'ye test başladığını yazdır / Display test start message on LCD
+    // LCD'ye test basladigini yazdir / Display test start message on LCD
 
-    delay(3000); // Başlangıç için bekleme süresi / Initial delay
+    delay(3000); // Baslangic icin bekleme suresi / Initial delay
 }
 
 void loop()
 {
     int motionDetected = iotbot.moduleMotionRead(SENSOR_PIN);
-    // PIR sensöründen hareket algılama verisini oku / Read motion detection data from PIR sensor
+    // PIR sensorunden hareket algilama verisini oku / Read motion detection data from PIR sensor
 
-    iotbot.serialWrite("PIR Sensör Durumu / PIR Sensor Status: " + String(motionDetected ? "Hareket Algılandı / Motion Detected" : "Hareket Yok / No Motion"));
-    // Hareket durumu bilgisini seri porta yazdır / Print motion status to serial port
+    iotbot.serialWrite("PIR Sensor Durumu / PIR Sensor Status: " + String(motionDetected ? "Hareket Algilandi / Motion Detected" : "Hareket Yok / No Motion"));
+    // Hareket durumu bilgisini seri porta yazdir / Print motion status to serial port
 
-    iotbot.lcdClear(); // LCD ekranı temizle / Clear the LCD screen
+    iotbot.lcdClear(); // LCD ekrani temizle / Clear the LCD screen
 
     if (motionDetected)
     {
-        iotbot.lcdWriteMid("⚠️ Hareket Algılandi!", "⚠️ Motion Detected!", "", "");
-        // Eğer hareket algılandıysa mesajı LCD ekrana yazdır / Display message on LCD if motion is detected
+        iotbot.lcdWriteMid("Hareket Algilandi!", "Motion Detected!", "", "");
+        // Eger hareket algilandiysa mesaji LCD ekrana yazdir / Display message on LCD if motion is detected
 
-        iotbot.serialWrite("⚠️ PIR Sensör Hareket Algıladı! / ⚠️ PIR Sensor Detected Motion!");
-        // Seri porta uyarı mesajı yazdır / Print warning message to serial port
+        iotbot.serialWrite("PIR Sensor Hareket Algiladi! / PIR Sensor Detected Motion!");
+        // Seri porta uyari mesaji yazdir / Print warning message to serial port
     }
     else
     {
         iotbot.lcdWriteMid("Hareket Yok", "No Motion", "", "");
-        // Eğer hareket algılanmadıysa mesajı LCD ekrana yazdır / Display message on LCD if no motion is detected
+        // Eger hareket algilanmadiysa mesaji LCD ekrana yazdir / Display message on LCD if no motion is detected
 
-        iotbot.serialWrite("PIR Sensör Hareket Algılamadı / PIR Sensor Detected No Motion");
-        // Seri porta bilgilendirme mesajı yazdır / Print no motion detected message to serial port
+        iotbot.serialWrite("PIR Sensor Hareket Algilamadi / PIR Sensor Detected No Motion");
+        // Seri porta bilgilendirme mesaji yazdir / Print no motion detected message to serial port
     }
 
-    delay(500); // Yeni okuma yapmadan önce 500 ms bekle / Wait for 500 ms before reading again
+    delay(500); // Yeni okuma yapmadan once 500 ms bekle / Wait for 500 ms before reading again
 }

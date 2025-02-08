@@ -1,4 +1,8 @@
 # Changelog
+## [1.4.0] - 2025-02-08
+### Fixed 
+- Örnek uygulamalarda türkçe karakterler kaldırıldı. 
+
 ## [1.3.0] - 2025-02-04
 ### Fixed 
 - Firebase fonksiyonları düzeltildi. 
