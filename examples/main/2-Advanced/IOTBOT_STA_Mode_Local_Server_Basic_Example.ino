@@ -31,7 +31,7 @@ const char WEBPageCSS[] PROGMEM = R"rawliteral(
 )rawliteral";
 
 // ✅ **HTML (Web Sayfası İçeriği)**
-// ESP32 tarafından sunulacak HTML kodu
+// IOTBOT tarafından sunulacak HTML kodu
 const char WEBPageHTML[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html lang="tr">
