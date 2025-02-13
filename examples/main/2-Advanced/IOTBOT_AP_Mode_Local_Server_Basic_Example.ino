@@ -50,10 +50,10 @@ void setup()
   // 📌 **Seri Haberleşmeyi Başlat / Start Serial Communication**
   iotbot.serialStart(115200);
 
-  // 📌 **ESP32'yi Erişim Noktası (AP) Olarak Başlat**
+  // 📌 **IOTBOT'u Erişim Noktası (AP) Olarak Başlat**
   iotbot.serverStart("AP", AP_SSID, AP_PASS);
 
-  // 📌 **ESP32 Üzerinde Web Sayfasını Yayınla**
+  // 📌 **IOTBOT Üzerinde Web Sayfasını Yayınla**
   iotbot.serverCreateLocalPage("demopage", WEBPageScript, WEBPageCSS, WEBPageHTML); // Cihaza Bağlanın ve linke gidin: 192.168.4.1/demo / Connect to device and goto link: 192.168.4.1/demo
 }
 
