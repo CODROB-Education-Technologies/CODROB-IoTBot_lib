@@ -1,4 +1,4 @@
-/* Firebase sunucusunu kullanmak için gerekli ayarlar nelerdir?
+/* IoT Uygulamalar İçin Sunucu Oluşturma ve Ayarları Yapılandırma Klavuzu
 
 1- Google firebase sunucusu oluşturmak için aşağıdaki adrese gidin.
 
@@ -28,6 +28,19 @@ void setup()
 
     // 🔗 Step 1: Connect to Wi-Fi
     iotbot.wifiStartAndConnect(WIFI_SSID, WIFI_PASS);
+
+    if (!iotbot.wifiConnectionControl())
+    {
+        iotbot.serialWrite("Device Stopped!");
+        while (true) // Endless loop | Sonsuz döngü
+        {
+            if (iotbot.wifiConnectionControl())
+            {
+                iotbot.serialWrite("Connection Success! Reworking..");
+                break; // Exit the loop, continue.| Döngüden çık, devam et.
+            }
+        }
+    }
 
     // 🔥 Step 2: Initialize Firebase
     iotbot.fbServerSetandStartWithUser(FIREBASE_PROJECT_URL, FIREBASE_API_KEY, USER_EMAIL, USER_PASSWORD);
