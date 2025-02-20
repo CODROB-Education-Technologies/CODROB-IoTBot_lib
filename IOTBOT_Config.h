@@ -1,10 +1,10 @@
-#ifndef CODROB_Config_H
-#define CODROB_Config_H
+#ifndef IOTBOT_Config_H
+#define IOTBOT_Config_H
 
 /**
- * @file CODROB_Config.h
- * @brief CODROB modüllerinin etkinleştirilmesi/devre dışı bırakılması için yapılandırma dosyası.
- * @brief Configuration file for enabling/disabling CODROB modules.
+ * @file IOTBOT_Config.h
+ * @brief IOTBOT modüllerinin etkinleştirilmesi/devre dışı bırakılması için yapılandırma dosyası.
+ * @brief Configuration file for enabling/disabling IOTBOT modules.
  *
  * Kullanılacak modülleri etkinleştirmek için `#define` satırını açın.
  * Devre dışı bırakılan modüller derlemeden hariç tutulur, hafıza kullanımı optimize edilir.
@@ -31,4 +31,4 @@
 // #define USE_FIREBASE     // Firebase desteğini etkinleştir / Enable Firebase support
 // #define USE_WIFI        // WiFi desteğini etkinleştir / Enable WiFi support
 
-#endif // CODROB_Config_H
+#endif // IOTBOT_Config_H
