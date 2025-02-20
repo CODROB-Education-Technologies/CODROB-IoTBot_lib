@@ -1,5 +1,3 @@
-#define USE_RFID
-
 #include <IOTBOT.h> // 📌 IoTBot kutuphanesi
 
 // 📌 **IoTBot nesnesi olustur**

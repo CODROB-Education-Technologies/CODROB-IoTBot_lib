@@ -1,6 +1,6 @@
 {
   "name": "CODROB_IOTBOT",
-  "version": "1.5.6",
+  "version": "1.6.0",
   "description": "Library for IOTBOT, an ESP32-based programmable device. Visit www.codrob.com.tr for more information.",
   "keywords": [
     "robotics",
@@ -28,6 +28,7 @@
       "examples/*",
       "IOTBOT.h",
       "IOTBOT.cpp",
+      "IOTBOT_Config.h",
       "README.md",
       "keywords.txt",
       "library.properties",
