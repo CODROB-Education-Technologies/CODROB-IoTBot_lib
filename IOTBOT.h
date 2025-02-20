@@ -7,6 +7,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <EEPROM.h>
 #include <Stepper.h>
+#include <IOTBOT_Config.h>
 
 // Eğer modül aktifse, ilgili kütüphaneyi ekle
 #if defined(USE_SERVO)
