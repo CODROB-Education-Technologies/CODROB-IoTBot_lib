@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.4] - 2025-02-20
+### Fixed
+- Kütüphna versiyonu arduıno ve vscode için güncellendi. 
+
 ## [1.5.3] - 2025-02-19
 ### Added
 - LCD setcursor eklendi. 
@@ -7,7 +11,7 @@
 - Arduino uyumluluğu için library.properties eklendi.
 - esphome/ESPAsyncWebServer-esphome yerine mathieucarbou/ESPAsyncWebServer eklendi. 
 - Keywords listesi güncellendi. 
-- Gerekli uygulamalara define eklendi. uygulamaya gore kütüphane aktifleşecek hale getirildi. 
+- Gerekli uygulamalara define eklendi. uygulamaya gore kütüphane aktifleşecek hale getirildi.
 
 ### Fixed
 - CPP ve H dosyası arduıno ile uyumlu hale getirildi. 

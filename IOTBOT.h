@@ -7,7 +7,6 @@
 #include <LiquidCrystal_I2C.h>
 #include <EEPROM.h>
 #include <Stepper.h>
-#endif
 
 // Eğer modül aktifse, ilgili kütüphaneyi ekle
 #if defined(USE_SERVO)
@@ -201,6 +200,9 @@ public:
   /*********************************** Trafic Ligh Sensor ***********************************
    */
   void moduleTraficLightWrite(bool red, bool yellow, bool green);
+  void moduleTraficLightWriteRed(bool red);
+  void moduleTraficLightWriteYellow(bool yellow);
+  void moduleTraficLightWriteGreen(bool green);
 
   /*********************************** Smart LED Sensor ***********************************
    */
@@ -357,4 +359,5 @@ private:
 
 #else
 #error "Unsupported platform! Only ESP32 and ESP8266 are supported."
+#endif
 #endif // IOTBOT_H

@@ -1,5 +1,3 @@
-#define USE_SERVER // Eğer Web Server kullanacaksa, bunu açmalı
-
 #include "IOTBOT.h"
 
 /*********************************** Constructor ***********************************/
@@ -1014,6 +1012,68 @@ void IOTBOT::moduleTraficLightWrite(bool red, bool yellow, bool green)
   {
     digitalWrite(YELLOW_PIN, LOW);
   }
+  if (green)
+  {
+    digitalWrite(GREEN_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(GREEN_PIN, LOW);
+  }
+}
+
+void IOTBOT::moduleTraficLightWriteRed(bool red)
+{
+#if defined(ESP32)
+  const int RED_PIN = IO32;
+#else
+#error "Unsupported platform! Only ESP32 and ESP8266 are supported."
+#endif
+
+  // Configure pins
+  pinMode(RED_PIN, OUTPUT);
+
+  if (red)
+  {
+    digitalWrite(RED_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(RED_PIN, LOW);
+  }
+}
+void IOTBOT::moduleTraficLightWriteYellow(bool yellow)
+{
+#if defined(ESP32)
+  const int YELLOW_PIN = IO26;
+#else
+#error "Unsupported platform! Only ESP32 and ESP8266 are supported."
+#endif
+
+  // Configure pins
+  pinMode(YELLOW_PIN, OUTPUT);
+
+  if (yellow)
+  {
+    digitalWrite(YELLOW_PIN, HIGH);
+  }
+  else
+  {
+    digitalWrite(YELLOW_PIN, LOW);
+  }
+}
+
+void IOTBOT::moduleTraficLightWriteGreen(bool green)
+{
+#if defined(ESP32)
+  const int GREEN_PIN = IO25;
+#else
+#error "Unsupported platform! Only ESP32 and ESP8266 are supported."
+#endif
+
+  // Configure pins
+  pinMode(GREEN_PIN, OUTPUT);
+
   if (green)
   {
     digitalWrite(GREEN_PIN, HIGH);
