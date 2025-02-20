@@ -1,3 +1,11 @@
+/*
+ * 📌 Server özelliklerini kullanabilmek için, IOTBOT_Config.h dosyasında 'USE_SERVER' tanımının başındaki
+ * yorum satırlarını (//) kaldırın. Aksi takdirde, web sunucu işlevleri devre dışı kalacaktır.
+ *
+ * 📌 To enable server features, remove the comment (//) before the 'USE_SERVER' definition in
+ * IOTBOT_Config.h. Otherwise, web server functions will be disabled.
+ */
+
 #include <IOTBOT.h> // 📌 IoTBot Kütüphanesi / IoTBot Library
 
 IOTBOT iotbot; // 📌 IoTBot Nesnesi / IoTBot Object

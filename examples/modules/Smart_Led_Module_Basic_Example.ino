@@ -1,3 +1,11 @@
+/*
+ * 📌 Akıllı Led özelliklerini kullanabilmek için, IOTBOT_Config.h dosyasında 'USE_NEOPIXEL' tanımının başındaki
+ * yorum satırlarını (//) kaldırın. Aksi takdirde, sensör işlevleri devre dışı kalacaktır.
+ *
+ * 📌 To enable Smart Led features, remove the comment (//) before the 'USE_NEOPIXEL' definition in
+ * IOTBOT_Config.h. Otherwise, sensor functions will be disabled.
+ */
+
 #include <IOTBOT.h> // IoTBot kutuphanesi / IoTBot library
 
 // IoTBot nesnesi olusturuluyor / Create an IoTBot object

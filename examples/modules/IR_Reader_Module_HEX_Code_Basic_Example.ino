@@ -1,3 +1,11 @@
+/*
+ * 📌 IR Sensör özelliklerini kullanabilmek için, IOTBOT_Config.h dosyasında 'USE_IR' tanımının başındaki
+ * yorum satırlarını (//) kaldırın. Aksi takdirde, sensör işlevleri devre dışı kalacaktır.
+ *
+ * 📌 To enable IR Sensor  features, remove the comment (//) before the 'USE_IR' definition in
+ * IOTBOT_Config.h. Otherwise, sensor functions will be disabled.
+ */
+
 #include <IOTBOT.h> // IOTBOT kutuphanesi / IOTBOT library
 
 // IOTBOT nesnesi olustur / Create an IOTBOT object

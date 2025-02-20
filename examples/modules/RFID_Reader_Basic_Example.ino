@@ -1,3 +1,11 @@
+/*
+ * 📌 RFID özelliklerini kullanabilmek için, IOTBOT_Config.h dosyasında 'USE_SERVO' tanımının başındaki
+ * yorum satırlarını (//) kaldırın. Aksi takdirde, sensör işlevleri devre dışı kalacaktır.
+ *
+ * 📌 To enable RFID features, remove the comment (//) before the 'USE_SERVO' definition in
+ * IOTBOT_Config.h. Otherwise, sensor functions will be disabled.
+ */
+
 #include <IOTBOT.h> // 📌 IoTBot kutuphanesi
 
 // 📌 **IoTBot nesnesi olustur**
