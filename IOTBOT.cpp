@@ -1,9 +1,17 @@
+#define USE_SERVER // Eğer Web Server kullanacaksa, bunu açmalı
+
 #include "IOTBOT.h"
 
 /*********************************** Constructor ***********************************/
-IOTBOT::IOTBOT() : serverCODROB(80), serverCODROBWebSocket("/serverCODROBWebSocket"), lcd(LCD_ADRESS, 20, 4) {}
 
-/*********************************** BRGIN ***********************************/
+IOTBOT::IOTBOT() : lcd(LCD_ADRESS, 20, 4)
+{
+#if defined(USE_SERVER)
+  serverCODROBWebSocket = new AsyncWebSocket("/serverCODROBWebSocket");
+#endif
+}
+
+/*********************************** BEGIN ***********************************/
 void IOTBOT::begin()
 {
   pinMode(JOYSTICK_Y_PIN, INPUT);
@@ -228,6 +236,11 @@ void IOTBOT::lcdWrite(float value) // Overloaded function for float / `float` i�
 void IOTBOT::lcdWrite(bool value) // Overloaded function for bool / `bool` için fonksiyon
 {
   lcd.print(value ? "true" : "false");
+}
+
+void IOTBOT::lcdSetCursor(int col, int row)
+{
+  lcd.setCursor(col, row);
 }
 
 void IOTBOT::lcdWriteCR(int col, int row, const char *text)
@@ -710,6 +723,8 @@ void IOTBOT::moduleDCMotorBrake()
  * angle: The target angle for the servo (0° to 180°).
  * acceleration: The delay (in milliseconds) between incremental movements.
  */
+#ifdef USE_SERVO // Eğer main.cpp içinde tanımlandıysa, burada aktif olur
+
 void IOTBOT::moduleServoGoAngle(int pin, int angle, int acceleration)
 {
   // Ensure acceleration is valid
@@ -741,11 +756,14 @@ void IOTBOT::moduleServoGoAngle(int pin, int angle, int acceleration)
   // Ensure the final angle is set correctly
   servoModule.write(angle);
 }
+#endif
 
 /*********************************** DHT Sensor Initialization ***********************************
  * Configures the DHT sensor.
  * This is automatically initialized when reading temperature or humidity.
  */
+#if defined(USE_DHT)
+
 void IOTBOT::initializeDht(int pin, uint8_t type)
 {
   if (!dhtSensor)
@@ -815,6 +833,8 @@ int IOTBOT::moduleDhtHumRead(int pin) // Read Humidity
 
   return static_cast<int>(hum);
 }
+#endif
+
 /*********************************** NTC Temp Sensor ***********************************
  * Reads the NTC temperature sensor value and calculates the temperature in Celsius.
  * pin: The analog pin where the NTC is connected.
@@ -1006,6 +1026,7 @@ void IOTBOT::moduleTraficLightWrite(bool red, bool yellow, bool green)
 
 /*********************************** Smart LED Sensor ***********************************
  */
+#if defined(USE_NEOPIXEL)
 void IOTBOT::extendSmartLEDPrepare(int pin, int numLEDs)
 {
   // Create a new Adafruit_NeoPixel object dynamically
@@ -1121,6 +1142,7 @@ void IOTBOT::moduleSmartLEDColorWipeEffect(uint32_t color, int wait)
     }
   }
 }
+#endif
 
 /*********************************** Motion Sensor ***********************************
  */
@@ -1160,6 +1182,7 @@ int IOTBOT::moduleSoilMoistureRead(int pin)
 
 /*********************************** IR Sensor ***********************************
  */
+#if defined(USE_IR)
 
 void IOTBOT::initializeIR(int pin) // Initialize the IR module / IR modülünü başlat
 {
@@ -1207,6 +1230,7 @@ int IOTBOT::moduleIRReadDecimalx8(int pin) // Read IR signal as only the last 8 
   }
   return 0; // No signal received / Sinyal yoksa 0 döndür
 }
+#endif
 
 /*********************************** Relay Sensor ***********************************
  */
@@ -1218,6 +1242,8 @@ void IOTBOT::moduleRelayWrite(int pin, bool status)
 
 /*********************************** RFID Sensor ***********************************
  */
+#if defined(USE_RFID)
+
 void IOTBOT::beginRFID()
 {
   SPI.begin();            // SPI başlat
@@ -1250,6 +1276,7 @@ int IOTBOT::moduleRFIDRead()
 
   return rfidNum.toInt();
 }
+#endif
 
 /*********************************** OTHER PINS ***********************************
  */
@@ -1263,9 +1290,10 @@ int IOTBOT::analogReadPin(int pin)
 void IOTBOT::analogWritePin(int pin, int value)
 {
   pinMode(pin, OUTPUT);
-  int pwmChannel = pin % 16;
-  ledcAttachPin(pin, pwmChannel);
-  ledcWrite(pwmChannel, value);
+  // int pwmChannel = pin % 16;
+  // ledcAttachPin(pin, pwmChannel);
+  // ledcWrite(pwmChannel, value);
+  analogWrite(pin, value); // ESP8266 için normal PWM
 }
 
 bool IOTBOT::digitalReadPin(int pin)
@@ -1301,6 +1329,7 @@ int IOTBOT::eepromReadInt(int address) // EEPROM'dan int türünde veri okumak i
 }
 
 /*********************************** WiFi ***********************************/
+#if defined(USE_WIFI)
 void IOTBOT::wifiStartAndConnect(const char *ssid, const char *pass)
 {
   Serial.printf("[WiFi]: Connection Starting!\r\n[WiFi]: SSID: %s\r\n[WiFi]: Pass: %s\r\n", ssid, pass);
@@ -1346,8 +1375,11 @@ String IOTBOT::wifiGetIPAddress()
 {
   return WiFi.localIP().toString();
 }
+#endif
 
 /*********************************** Server ***********************************/
+#if defined(USE_SERVER)
+
 void IOTBOT::serverStart(const char *mode, const char *ssid, const char *password)
 {
   if (strcmp(mode, "STA") == 0)
@@ -1402,8 +1434,8 @@ void IOTBOT::serverStart(const char *mode, const char *ssid, const char *passwor
       request->send(404, "text/plain", "Not Found"); });
 
   // 📌 **WebSocket Olaylarını Bağla**
-  serverCODROBWebSocket.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
-                                {
+  serverCODROBWebSocket->onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
+                                 {
       if (type == WS_EVT_CONNECT) {
           Serial.println("WebSocket Client Connected");
       } else if (type == WS_EVT_DISCONNECT) {
@@ -1411,14 +1443,14 @@ void IOTBOT::serverStart(const char *mode, const char *ssid, const char *passwor
       } });
 
   // 📌 WebSocket'i Sunucuya Bağla
-  serverCODROB.addHandler(&serverCODROBWebSocket);
+  serverCODROB.addHandler(serverCODROBWebSocket);
 
   // 📌 **En son sunucuyu başlat!**
   serverCODROB.begin();
   Serial.println("[Local Server]: Server Started! ✅");
 }
 
-void ROLEBOT::serverCreateLocalPage(const char *url, const char *WEBPageScript, const char *WEBPageCSS, const char *WEBPageHTML, size_t bufferSize)
+void IOTBOT::serverCreateLocalPage(const char *url, const char *WEBPageScript, const char *WEBPageCSS, const char *WEBPageHTML, size_t bufferSize)
 {
   // 📌 Sayfa içeriğini oluştur
   serverCODROB.on(("/" + String(url)).c_str(), HTTP_GET, [WEBPageScript, WEBPageCSS, WEBPageHTML, bufferSize](AsyncWebServerRequest *request)
@@ -1458,8 +1490,10 @@ void IOTBOT::serverContinue()
     serverHandleDNS();
   }
 }
+#endif
 
 /*********************************** Firebase Server Functions ***********************************/
+#if defined(USE_FIREBASE)
 
 // Initialize Firebase connection with SignUp Authentication
 void IOTBOT::fbServerSetandStartWithUser(const char *projectURL, const char *secretKey, const char *userMail, const char *mailPass)
@@ -1672,3 +1706,6 @@ String IOTBOT::fbServerGetJSON(const char *dataPath)
   Serial.println("[ERROR]: Failed to retrieve JSON data.");
   return "{}";
 }
+#endif
+
+/*********************************** xxxxxxxxxxxxxxxxxxx ***********************************/

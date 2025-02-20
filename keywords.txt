@@ -18,6 +18,7 @@ buzzerPlayTone	KEYWORD2
 buzzerSoundIntro	KEYWORD2
 buzzertest	KEYWORD2
 
+lcdSetCursor KEYWORD2
 lcdWriteMid	KEYWORD2
 lcdWriteCR	KEYWORD2
 lcdWrite	KEYWORD2
@@ -74,6 +75,9 @@ moduleVibrationAnalogRead	KEYWORD2
 moduleUltrasonicDistanceRead	KEYWORD2
 
 moduleTraficLightWrite	KEYWORD2
+moduleTraficLightWriteRed KEYWORD2
+moduleTraficLightWriteYellow KEYWORD2
+moduleTraficLightWriteGreen KEYWORD2
 
 extendSmartLEDPrepare	KEYWORD2
 extendSmartLEDFill	KEYWORD2

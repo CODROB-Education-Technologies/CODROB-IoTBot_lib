@@ -1,3 +1,5 @@
+#define USE_SERVO
+
 #include <IOTBOT.h> // IoTBot kutuphanesi / IoTBot library
 
 // IoTBot nesnesi olusturuluyor / Create an IoTBot object

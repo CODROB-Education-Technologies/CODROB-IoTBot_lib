@@ -1,28 +1,57 @@
 #ifndef IOTBOT_H
 #define IOTBOT_H
-
-#if defined(ESP32)
-
 #include <Arduino.h>
-#include <ESP32Servo.h>
+
+#if defined(ESP32) // ESP32 ve diğer bağımlı kütüphaneleri ekleyelim
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-#include <DHT.h>
+#include <EEPROM.h>
 #include <Stepper.h>
+#endif
+
+// Eğer modül aktifse, ilgili kütüphaneyi ekle
+#if defined(USE_SERVO)
+#include <ESP32Servo.h>
+#endif
+
+#if defined(USE_DHT)
+#include <DHT.h>
+#endif
+
+#if defined(USE_NEOPIXEL)
 #include <Adafruit_NeoPixel.h>
+#endif
+
+#if defined(USE_IR)
 #include <IRremoteESP8266.h>
 #include <IRrecv.h>
 #include <IRutils.h>
-#include <MFRC522.h>
+#endif
+
+#if defined(USE_RFID)
 #include <SPI.h>
-#include <EEPROM.h>
-#include <WiFi.h>
+#include <MFRC522.h>
+#endif
+
+#if defined(USE_SERVER)
+#ifndef USE_WIFI
+#define USE_WIFI
+#endif
 #include <ESPAsyncWebServer.h>
 #include <DNSServer.h>
+#endif
+
+#if defined(USE_FIREBASE)
+#ifndef USE_WIFI
+#define USE_WIFI
+#endif
 #include <Firebase_ESP_Client.h>
-// #include "addons/TokenHelper.h"
-// #include "addons/RTDBHelper.h"
 #include <ArduinoJson.h>
+#endif
+
+#if defined(USE_WIFI)
+#include <WiFi.h>
+#endif
 
 // Pins
 #define JOYSTICK_Y_PIN 34
@@ -71,6 +100,8 @@ public:
 
   /*********************************** LCD SCREEN ***********************************
    */
+
+  void lcdSetCursor(int col, int row);
   void lcdWriteMid(const char *line1, const char *line2, const char *line3, const char *line4);
   void lcdWrite(String text);
   void lcdWrite(int value);
@@ -130,19 +161,24 @@ public:
 
   /*********************************** Servo Motor Sensor ***********************************
    */
+#if defined(USE_SERVO)
   void moduleServoGoAngle(int pin, int angle, int acceleration);
+#endif
 
   /*********************************** DHT Sensor ***********************************
    */
+#if defined(USE_DHT)
   int moduleDhtTempReadC(int pin);
   int moduleDthFeelingTempC(int pin);
   int moduleDhtTempReadF(int pin);
   int moduleDthFeelingTempF(int pin);
   int moduleDhtHumRead(int pin);
+#endif
 
   /*********************************** NTC Temp Sensor ***********************************
    */
-  float moduleNtcTempRead(int pin);
+  float
+  moduleNtcTempRead(int pin);
 
   /*********************************** Magnetic Sensor ***********************************
    */
@@ -168,6 +204,7 @@ public:
 
   /*********************************** Smart LED Sensor ***********************************
    */
+#if defined(USE_NEOPIXEL)
   void extendSmartLEDPrepare(int pin, int numLEDs);
   void extendSmartLEDFill(int startLED, int endLED, int red, int green, int blue);
   void moduleSmartLEDPrepare(int pin);                             // Initialize NeoPixel strip
@@ -177,6 +214,7 @@ public:
   void moduleSmartLEDTheaterChaseEffect(uint32_t color, int wait); // Theater chase effect
   void moduleSmartLEDColorWipeEffect(uint32_t color, int wait);    // Color wipe effect
   uint32_t getColor(int red, int green, int blue);                 // Helper function for creating colors
+#endif
 
   /*********************************** Motion Sensor ***********************************
    */
@@ -196,9 +234,11 @@ public:
 
   /*********************************** IR Sensor ***********************************
    */
+#if defined(USE_IR)
   String moduleIRReadHex(int pin);
   int moduleIRReadDecimalx32(int pin);
   int moduleIRReadDecimalx8(int pin);
+#endif
 
   /*********************************** Relay Sensor ***********************************
    */
@@ -206,7 +246,9 @@ public:
 
   /*********************************** RFID Sensor ***********************************
    */
+#if defined(USE_RFID)
   int moduleRFIDRead(); // RFID kart ID oku / Read RFID card ID
+#endif
 
   /*********************************** OTHER PINS ***********************************
    */
@@ -222,20 +264,25 @@ public:
 
   /*********************************** WiFi  ***********************************
    */
+#if defined(USE_WIFI)
   void wifiStartAndConnect(const char *ssid, const char *pass);
   bool wifiConnectionControl();
   String wifiGetMACAddress();
   String wifiGetIPAddress();
+#endif
 
   /*********************************** Server  ***********************************
    */
+#if defined(USE_SERVER)
   void serverStart(const char *mode, const char *ssid, const char *password);
   void serverCreateLocalPage(const char *url, const char *WEBPageScript, const char *WEBPageCSS, const char *WEBPageHTML, size_t bufferSize = 4096);
   void serverHandleDNS();
   void serverContinue();
+#endif
 
   /*********************************** Firebase Server  ***********************************
    */
+#if defined(USE_FIREBASE)
   // 📡 Firebase Server Functions
   void fbServerSetandStartWithUser(const char *projectURL, const char *secretKey, const char *userMail, const char *mailPass); // projectURL: YOUR_FIREBASE_PROJECT_ID.firebaseio.com / secretKey: YOUR_FIREBASE_DATABASE_SECRET
 
@@ -254,22 +301,30 @@ public:
   double fbServerGetDouble(const char *dataPath);
   bool fbServerGetBool(const char *dataPath);
   String fbServerGetJSON(const char *dataPath);
+#endif
 
 private:
   LiquidCrystal_I2C lcd;
-
-  Servo servoModule; // Create a Servo object for controlling the servo motor
-  int currentAngle = 0;
-
   int encoderCount; // Stores the encoder's position
   int lastStateA;   // Stores the last state of A pin
   int lastStateB;   // Stores the last state of B pin
   int counterBuzzer, counterLCD, counterLDR, counterRelay, counterPot, counterJoystick, counterButtons, counterEncoder = 0;
 
+#if defined(USE_SERVO)
+  Servo servoModule; // Create a Servo object for controlling the servo motor
+  int currentAngle = 0;
+#endif
+
+#if defined(USE_DHT)
   void initializeDht(int pin, uint8_t type);
   DHT *dhtSensor; // Pointer to DHT sensor object
+#endif
 
+#if defined(USE_NEOPIXEL)
   Adafruit_NeoPixel *pixels; // NeoPixel object pointer
+#endif
+
+#if defined(USE_IR)
 
   void initializeIR(int pin);
   IRrecv *irrecv = nullptr; // Pointer to IR receiver / IR alıcısı için pointer
@@ -277,23 +332,29 @@ private:
   int irPin;                // Store the IR receiver pin / IR alıcı pini sakla
   long irRawValue = 0;      // Stores last received IR value / En son alınan IR değerini saklar
 
+#endif
+
+#if defined(USE_RFID)
   void beginRFID();             // RFID başlat / Initialize RFID module
   MFRC522 rfid{5, 10};          // RFID modülü nesnesi / RFID module object (SS_PIN: 5, RST_PIN: 10)
   bool rfidInitialized = false; // RFID'nin başlatılıp başlatılmadığını kontrol eden bayrak / Flag to check initialization
+#endif
 
-  const IPAddress apIP = IPAddress(192, 168, 4, 1);                                // Sabit IP adresi tanımlanıyor / Define static IP address
-  DNSServer dnsServer;                                                             // DNS sunucusu tanımlanıyor / Define DNS Server
-  AsyncWebServer serverCODROB = AsyncWebServer(80);                                // Async Web Server nesnesi oluşturuluyor / Create an Async Web Server object
-  AsyncWebSocket serverCODROBWebSocket = AsyncWebSocket("/serverCODROBWebSocket"); // WebSocket nesnesi tanımlanıyor / Define WebSocket object
+#if defined(USE_SERVER)
+  const IPAddress apIP = IPAddress(192, 168, 4, 1); // Sabit IP adresi tanımlanıyor / Define static IP address
+  DNSServer dnsServer;                              // DNS sunucusu tanımlanıyor / Define DNS Server
+  AsyncWebServer serverCODROB{80};                  // Web server objesi
+  AsyncWebSocket *serverCODROBWebSocket;            // Pointer olarak tanımla
+#endif
 
+#if defined(USE_FIREBASE)
   FirebaseData firebaseData;     // Data object to handle Firebase communication
   FirebaseAuth firebaseAuth;     // Authentication credentials for user verification
   FirebaseConfig firebaseConfig; // Configuration settings for Firebase
   char uid[128] = "";            // User ID storage
+#endif
 };
 
 #else
 #error "Unsupported platform! Only ESP32 and ESP8266 are supported."
-#endif
-
 #endif // IOTBOT_H

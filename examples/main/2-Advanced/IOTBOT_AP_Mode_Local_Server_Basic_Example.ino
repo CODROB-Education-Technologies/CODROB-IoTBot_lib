@@ -1,3 +1,5 @@
+#define USE_SERVER
+
 #include <IOTBOT.h> // 📌 IoTBot Kütüphanesi / IoTBot Library
 
 IOTBOT iotbot; // 📌 IoTBot Nesnesi / IoTBot Object

@@ -1,3 +1,5 @@
+#define USE_DHT
+
 #include <IOTBOT.h> // IoTBot kutuphanesi / IoTBot library
 
 // IoTBot nesnesi olusturuluyor / Create an IoTBot object

@@ -1,3 +1,5 @@
+#define USE_IR
+
 #include <IOTBOT.h> // IOTBOT kutuphanesi / IOTBOT library
 
 // IOTBOT nesnesi olustur / Create an IOTBOT object

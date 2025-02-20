@@ -1,6 +1,6 @@
 {
   "name": "CODROB_IOTBOT",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Library for IOTBOT, an ESP32-based programmable device. Visit www.codrob.com.tr for more information.",
   "keywords": [
     "robotics",
@@ -25,12 +25,12 @@
   },
   "export": {
     "include": [
-      "src/*",
-      "include/*",
       "examples/*",
-      "test/*",
+      "IOTBOT.h",
+      "IOTBOT.cpp",
       "README.md",
       "keywords.txt",
+      "library.properties",
       "LICENSE",
       "CHANGELOG.md"
     ]
@@ -57,7 +57,7 @@
     "arduino-libraries/Stepper": ">=1.1.3",
     "crankyoldgit/IRremoteESP8266": ">=2.8.6",
     "miguelbalboa/MFRC522": ">=1.4.11",
-    "esphome/ESPAsyncWebServer-esphome": ">=3.3.0",
+    "mathieucarbou/ESPAsyncWebServer": ">=3.6.0",
     "mobizt/Firebase Arduino Client Library for ESP8266 and ESP32": ">=4.4.14",
     "bblanchon/ArduinoJson": ">=7.1.0"
   }

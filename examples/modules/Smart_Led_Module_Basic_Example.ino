@@ -1,10 +1,4 @@
-/*
- * This code is designed for the CODROB Smart LED Module.
- * Created to demonstrate the use of NeoPixel LED effects with CODROB IoTBOT.
- *
- * CODROB Akilli LED Modulu icin tasarlanmistir.
- * Bu kod, NeoPixel LED efektlerini kullanmayi gostermek amaciyla olusturulmustur.
- */
+#define USE_NEOPIXEL
 
 #include <IOTBOT.h> // IoTBot kutuphanesi / IoTBot library
 

@@ -1,9 +1,4 @@
-/* IoT Uygulamalar İçin Sunucu Oluşturma ve Ayarları Yapılandırma Klavuzu
-
-1- Google firebase sunucusu oluşturmak için aşağıdaki adrese gidin.
-
-
-*/
+#define USE_FIREBASE
 
 #include <IOTBOT.h>
 

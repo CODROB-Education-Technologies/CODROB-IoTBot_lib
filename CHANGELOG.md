@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.3] - 2025-02-19
+### Added
+- LCD setcursor eklendi. 
+- Trafik iışıkları için tekli modül eklendi. 
+- Arduino uyumluluğu için library.properties eklendi.
+- esphome/ESPAsyncWebServer-esphome yerine mathieucarbou/ESPAsyncWebServer eklendi. 
+- Keywords listesi güncellendi. 
+- Gerekli uygulamalara define eklendi. uygulamaya gore kütüphane aktifleşecek hale getirildi. 
+
+### Fixed
+- CPP ve H dosyası arduıno ile uyumlu hale getirildi. 
+
 ## [1.5.2] - 2025-02-13
 ### Fixed
 - Firebase ve Wifi örnek uygulamalrındaki eksiklikler düzeltildi. 
