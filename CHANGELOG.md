@@ -1,4 +1,10 @@
 # Changelog
+
+
+## [1.6.6] - 2025-02-27
+### Fixed
+- BUZZER TONE DEVRE DIŞI BIRAKILDI, ANALOGWRİTE İLE GÜNCELLENDİ. SERVO MOTOR ÇAKIŞMASI ENGELLENDİ
+
 ## [1.6.5] - 2025-02-21
 ### Added
 - Config dosyası eklendi. 

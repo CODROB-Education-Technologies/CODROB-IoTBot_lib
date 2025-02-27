@@ -34,10 +34,14 @@ void IOTBOT::begin()
   lcd.init();
   lcd.backlight();
   lcd.clear();
-  tone(BUZZER_PIN, 750, 125); // 80 Hz'de 125 ms çal
-  noTone(BUZZER_PIN);
-  tone(BUZZER_PIN, 750, 100); // 90 Hz'de 100 ms çal
-  noTone(BUZZER_PIN);
+
+  analogWrite(BUZZER_PIN, 750);
+  delay(125);
+  analogWrite(BUZZER_PIN, 0);
+  delay(100);
+  analogWrite(BUZZER_PIN, 700);
+  delay(100);
+  analogWrite(BUZZER_PIN, 0);
 
   lcd.setCursor(3, 1);
   lcd.print("--- IoTBot ---");
@@ -82,14 +86,17 @@ void IOTBOT::playIntro()
   lcd.print("from  CODROB");
   delay(500);
 
-  tone(BUZZER_PIN, 800, 200); // 80 Hz'de 125 ms çal
-  noTone(BUZZER_PIN);
-  delay(150);
-  tone(BUZZER_PIN, 1000, 100); // 90 Hz'de 100 ms çal
-  noTone(BUZZER_PIN);
+  analogWrite(BUZZER_PIN, 800);
   delay(200);
-  tone(BUZZER_PIN, 1500, 400); // 80 Hz'de 350 ms çal
-  noTone(BUZZER_PIN);
+  analogWrite(BUZZER_PIN, 0);
+  delay(150);
+  analogWrite(BUZZER_PIN, 1000);
+  delay(100);
+  analogWrite(BUZZER_PIN, 0);
+  delay(200);
+  analogWrite(BUZZER_PIN, 1500);
+  delay(400);
+  analogWrite(BUZZER_PIN, 0);
 }
 
 /*********************************** Serial Port ***********************************
@@ -133,21 +140,24 @@ void IOTBOT::serialWrite(bool value) // Overloaded function for bool / `bool` i�
  */
 void IOTBOT::buzzerPlayTone(int frequency, int duration)
 {
-  tone(BUZZER_PIN, frequency, duration);
+  analogWrite(BUZZER_PIN, frequency);
   delay(duration);
-  noTone(BUZZER_PIN);
+  analogWrite(BUZZER_PIN, 0);
 }
 
 void IOTBOT::buzzerSoundIntro()
 {
-  tone(BUZZER_PIN, 750, 125);
-  noTone(BUZZER_PIN);
+  analogWrite(BUZZER_PIN, 750);
+  delay(125);
+  analogWrite(BUZZER_PIN, 0);
   delay(150);
-  tone(BUZZER_PIN, 1000, 100);
-  noTone(BUZZER_PIN);
+  analogWrite(BUZZER_PIN, 1000);
+  delay(100);
+  analogWrite(BUZZER_PIN, 0);
   delay(200);
-  tone(BUZZER_PIN, 800, 350);
-  noTone(BUZZER_PIN);
+  analogWrite(BUZZER_PIN, 800);
+  delay(400);
+  analogWrite(BUZZER_PIN, 0);
 }
 
 void IOTBOT::buzzertest()
