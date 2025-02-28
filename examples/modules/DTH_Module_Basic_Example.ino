@@ -5,6 +5,7 @@
  * 📌 To enable DHT Sensor  features, remove the comment (//) before the 'USE_DHT' definition in
  * IOTBOT_Config.h. Otherwise, sensor functions will be disabled.
  */
+#include <USE_DHT.h>
 
 #include <IOTBOT.h> // IoTBot kutuphanesi / IoTBot library
 

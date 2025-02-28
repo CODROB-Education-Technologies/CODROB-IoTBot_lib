@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.6.7] - 2025-02-28
+### Added
+- Tüm modüller için config dosyası eklendi. 
 
 ## [1.6.6] - 2025-02-27
 ### Fixed

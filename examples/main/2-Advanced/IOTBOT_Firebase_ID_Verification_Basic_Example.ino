@@ -5,6 +5,7 @@
  * 📌 To enable Firebase features, remove the comment (//) before the 'USE_FIREBASE' definition in
  * IOTBOT_Config.h. Otherwise, Firebase functions will be disabled.
  */
+#include <USE_FIREBASE.h>
 
 #include <IOTBOT.h>
 

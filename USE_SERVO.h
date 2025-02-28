@@ -1,8 +1,8 @@
-#ifndef IOTBOT_Config_H
-#define IOTBOT_Config_H
+#ifndef USE_SERVO_H
+#define USE_SERVO_H
 
 /**
- * @file IOTBOT_Config.h
+ * @file USE_SERVO.h
  * @brief IOTBOT modüllerinin etkinleştirilmesi/devre dışı bırakılması için yapılandırma dosyası.
  * @brief Configuration file for enabling/disabling IOTBOT modules.
  *
@@ -23,13 +23,6 @@
 // Enable/disable modules
 // Etkinleştirmek için yorumu kaldırın / Uncomment to activate
 
-#define USE_SERVO    // Servo motor desteğini etkinleştir / Enable Servo motor support
-#define USE_DHT      // DHT sıcaklık/nem sensörünü etkinleştir / Enable DHT temperature/humidity sensor
-#define USE_NEOPIXEL // NeoPixel LED desteğini etkinleştir / Enable NeoPixel LED support
-#define USE_RFID     // RFID modülünü etkinleştir / Enable RFID module support
-#define USE_SERVER   // Web Sunucusu desteğini etkinleştir / Enable Web Server support
-#define USE_FIREBASE // Firebase desteğini etkinleştir / Enable Firebase support
-#define USE_WIFI     // WiFi desteğini etkinleştir / Enable WiFi support
-#define USE_IR       // IR desteğini etkinleştir / Enable IR support
+#define USE_SERVO // Servo motor desteğini etkinleştir / Enable Servo motor support
 
-#endif // IOTBOT_Config_H
+#endif // USE_SERVO_H

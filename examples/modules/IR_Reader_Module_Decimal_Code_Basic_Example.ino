@@ -5,6 +5,7 @@
  * 📌 To enable IR Sensor  features, remove the comment (//) before the 'USE_IR' definition in
  * IOTBOT_Config.h. Otherwise, sensor functions will be disabled.
  */
+#include <USE_IR.h>
 
 #include <IOTBOT.h> // IOTBOT kutuphanesi / IOTBOT library
 

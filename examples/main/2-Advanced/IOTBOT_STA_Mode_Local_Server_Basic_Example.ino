@@ -5,6 +5,7 @@
  * 📌 To enable server features, remove the comment (//) before the 'USE_SERVER' definition in
  * IOTBOT_Config.h. Otherwise, web server functions will be disabled.
  */
+#include <USE_SERVER.h>
 
 #include <IOTBOT.h> // 📌 IoTBot Kütüphanesi / IoTBot Library
 

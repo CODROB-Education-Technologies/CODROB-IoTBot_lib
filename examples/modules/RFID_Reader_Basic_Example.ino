@@ -5,6 +5,7 @@
  * 📌 To enable RFID features, remove the comment (//) before the 'USE_SERVO' definition in
  * IOTBOT_Config.h. Otherwise, sensor functions will be disabled.
  */
+#include <USE_RFID.h>
 
 #include <IOTBOT.h> // 📌 IoTBot kutuphanesi
 

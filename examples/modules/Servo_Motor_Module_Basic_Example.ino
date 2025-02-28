@@ -5,6 +5,7 @@
  * 📌 To enable Servo features, remove the comment (//) before the 'USE_SERVO' definition in
  * IOTBOT_Config.h. Otherwise, sensor functions will be disabled.
  */
+#include <USE_SERVO.h>
 
 #include <IOTBOT.h> // IoTBot kutuphanesi / IoTBot library
 
