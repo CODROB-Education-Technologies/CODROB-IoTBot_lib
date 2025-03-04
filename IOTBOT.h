@@ -1,6 +1,7 @@
 #ifndef IOTBOT_H
 #define IOTBOT_H
 #include <Arduino.h>
+#include <IOTBOT_Config.h>
 
 #if defined(ESP32) // ESP32 ve diğer bağımlı kütüphaneleri ekleyelim
 #include <Wire.h>
@@ -159,22 +160,6 @@ public:
   void moduleDCMotorStop();
   void moduleDCMotorBrake();
 
-  /*********************************** Servo Motor Sensor ***********************************
-   */
-#if defined(USE_SERVO)
-  void moduleServoGoAngle(int pin, int angle, int acceleration);
-#endif
-
-  /*********************************** DHT Sensor ***********************************
-   */
-#if defined(USE_DHT)
-  int moduleDhtTempReadC(int pin);
-  int moduleDthFeelingTempC(int pin);
-  int moduleDhtTempReadF(int pin);
-  int moduleDthFeelingTempF(int pin);
-  int moduleDhtHumRead(int pin);
-#endif
-
   /*********************************** NTC Temp Sensor ***********************************
    */
   float
@@ -205,20 +190,6 @@ public:
   void moduleTraficLightWriteYellow(bool yellow);
   void moduleTraficLightWriteGreen(bool green);
 
-  /*********************************** Smart LED Sensor ***********************************
-   */
-#if defined(USE_NEOPIXEL)
-  void extendSmartLEDPrepare(int pin, int numLEDs);
-  void extendSmartLEDFill(int startLED, int endLED, int red, int green, int blue);
-  void moduleSmartLEDPrepare(int pin);                             // Initialize NeoPixel strip
-  void moduleSmartLEDWrite(int led, int red, int green, int blue); // Write RGB values to specific LED
-  void moduleSmartLEDRainbowEffect(int wait);                      // Rainbow effect
-  void moduleSmartLEDRainbowTheaterChaseEffect(int wait);          // Rainbow theater chase effect
-  void moduleSmartLEDTheaterChaseEffect(uint32_t color, int wait); // Theater chase effect
-  void moduleSmartLEDColorWipeEffect(uint32_t color, int wait);    // Color wipe effect
-  uint32_t getColor(int red, int green, int blue);                 // Helper function for creating colors
-#endif
-
   /*********************************** Motion Sensor ***********************************
    */
   bool moduleMotionRead(int pin);
@@ -235,23 +206,9 @@ public:
    */
   int moduleSoilMoistureRead(int pin);
 
-  /*********************************** IR Sensor ***********************************
-   */
-#if defined(USE_IR)
-  String moduleIRReadHex(int pin);
-  int moduleIRReadDecimalx32(int pin);
-  int moduleIRReadDecimalx8(int pin);
-#endif
-
   /*********************************** Relay Sensor ***********************************
    */
   void moduleRelayWrite(int pin, bool status);
-
-  /*********************************** RFID Sensor ***********************************
-   */
-#if defined(USE_RFID)
-  int moduleRFIDRead(); // RFID kart ID oku / Read RFID card ID
-#endif
 
   /*********************************** OTHER PINS ***********************************
    */
@@ -265,13 +222,48 @@ public:
   void eepromWriteInt(int address, int value);
   int eepromReadInt(int address);
 
-  /*********************************** WiFi  ***********************************
+  /*********************************** Servo Motor Sensor ***********************************
    */
-#if defined(USE_WIFI)
-  void wifiStartAndConnect(const char *ssid, const char *pass);
-  bool wifiConnectionControl();
-  String wifiGetMACAddress();
-  String wifiGetIPAddress();
+#if defined(USE_SERVO)
+  void moduleServoGoAngle(int pin, int angle, int acceleration);
+#endif
+
+  /*********************************** DHT Sensor ***********************************
+   */
+#if defined(USE_DHT)
+  int moduleDhtTempReadC(int pin);
+  int moduleDthFeelingTempC(int pin);
+  int moduleDhtTempReadF(int pin);
+  int moduleDthFeelingTempF(int pin);
+  int moduleDhtHumRead(int pin);
+#endif
+
+  /*********************************** Smart LED Sensor ***********************************
+   */
+#if defined(USE_NEOPIXEL)
+  void extendSmartLEDPrepare(int pin, int numLEDs);
+  void extendSmartLEDFill(int startLED, int endLED, int red, int green, int blue);
+  void moduleSmartLEDPrepare(int pin);                             // Initialize NeoPixel strip
+  void moduleSmartLEDWrite(int led, int red, int green, int blue); // Write RGB values to specific LED
+  void moduleSmartLEDRainbowEffect(int wait);                      // Rainbow effect
+  void moduleSmartLEDRainbowTheaterChaseEffect(int wait);          // Rainbow theater chase effect
+  void moduleSmartLEDTheaterChaseEffect(uint32_t color, int wait); // Theater chase effect
+  void moduleSmartLEDColorWipeEffect(uint32_t color, int wait);    // Color wipe effect
+  uint32_t getColor(int red, int green, int blue);                 // Helper function for creating colors
+#endif
+
+  /*********************************** IR Sensor ***********************************
+   */
+#if defined(USE_IR)
+  String moduleIRReadHex(int pin);
+  int moduleIRReadDecimalx32(int pin);
+  int moduleIRReadDecimalx8(int pin);
+#endif
+
+  /*********************************** RFID Sensor ***********************************
+   */
+#if defined(USE_RFID)
+  int moduleRFIDRead(); // RFID kart ID oku / Read RFID card ID
 #endif
 
   /*********************************** Server  ***********************************
@@ -304,6 +296,15 @@ public:
   double fbServerGetDouble(const char *dataPath);
   bool fbServerGetBool(const char *dataPath);
   String fbServerGetJSON(const char *dataPath);
+#endif
+
+  /*********************************** WiFi  ***********************************
+   */
+#if defined(USE_WIFI)
+  void wifiStartAndConnect(const char *ssid, const char *pass);
+  bool wifiConnectionControl();
+  String wifiGetMACAddress();
+  String wifiGetIPAddress();
 #endif
 
 private:

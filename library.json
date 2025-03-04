@@ -1,6 +1,6 @@
 {
   "name": "CODROB_IOTBOT",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "Library for IOTBOT, an ESP32-based programmable device. Visit www.codrob.com.tr for more information.",
   "keywords": [
     "robotics",

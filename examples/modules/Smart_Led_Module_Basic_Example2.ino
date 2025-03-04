@@ -5,8 +5,6 @@
  * 📌 To enable Smart Led features, remove the comment (//) before the 'USE_NEOPIXEL' definition in
  * IOTBOT_Config.h. Otherwise, sensor functions will be disabled.
  */
-#include <USE_FIREBASE.h>
-
 #include <IOTBOT.h> // IoTBot kutuphanesi / IoTBot library
 
 // IoTBot nesnesi olusturuluyor / Create an IoTBot object

@@ -1,3 +1,4 @@
+#include <IOTBOT_Config.h>
 #include "IOTBOT.h"
 
 /*********************************** Constructor ***********************************/
@@ -725,124 +726,6 @@ void IOTBOT::moduleDCMotorBrake()
   digitalWrite(IO27, HIGH);
 }
 
-/*********************************** Servo Angle Control ***********************************
- * Moves a servo to the specified angle with optional acceleration control.
- * pin: The GPIO pin connected to the servo signal.
- * angle: The target angle for the servo (0° to 180°).
- * acceleration: The delay (in milliseconds) between incremental movements.
- */
-#ifdef USE_SERVO // Eğer main.cpp içinde tanımlandıysa, burada aktif olur
-
-void IOTBOT::moduleServoGoAngle(int pin, int angle, int acceleration)
-{
-  // Ensure acceleration is valid
-  acceleration = max(acceleration, 1); // Minimum 1 ms gecikme
-
-  // Attach the servo to the specified pin if not already attached
-  if (!servoModule.attached())
-  {
-    servoModule.attach(pin, 1000, 2000); // Sadece bağlı değilse ata
-  }
-
-  // Ensure angle is within valid bounds (0 to 180 degrees)
-  angle = constrain(angle, 0, 180);
-
-  // Get the current position of the servo
-  // int currentAngle = servoModule.read(); // Read the current angle (0° to 180°)
-
-  // Determine movement direction (1 for increasing, -1 for decreasing)
-  int step = (angle > currentAngle) ? 1 : -1;
-
-  // Gradually move the servo to the target angle with acceleration
-  for (int pos = currentAngle; pos != angle; pos += step)
-  {
-    servoModule.write(pos); // Move servo to the next position
-    delay(acceleration);    // Delay for acceleration control
-  }
-  currentAngle = angle; // Read the current angle (0° to 180°)
-
-  // Ensure the final angle is set correctly
-  servoModule.write(angle);
-}
-#endif
-
-/*********************************** DHT Sensor Initialization ***********************************
- * Configures the DHT sensor.
- * This is automatically initialized when reading temperature or humidity.
- */
-#if defined(USE_DHT)
-
-void IOTBOT::initializeDht(int pin, uint8_t type)
-{
-  if (!dhtSensor)
-  {
-    dhtSensor = new DHT(pin, type); // Create a new DHT object
-    dhtSensor->begin();             // Initialize the sensor
-  }
-}
-
-int IOTBOT::moduleDhtTempReadC(int pin) // Read Temperature
-{
-  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
-  float temp = dhtSensor->readTemperature();
-
-  if (isnan(temp)) // Check if reading failed
-    return -999;
-
-  return static_cast<int>(temp);
-}
-
-int IOTBOT::moduleDthFeelingTempC(int pin) // Calculate Heat Index (Feeling Temperature)
-{
-  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
-
-  float temp = dhtSensor->readTemperature();
-  float hum = dhtSensor->readHumidity();
-
-  if (isnan(temp) || isnan(hum)) // Check if readings failed
-    return -999;
-
-  float heatIndex = dhtSensor->computeHeatIndex(temp, hum, false); // Calculate heat index in Celsius
-  return static_cast<int>(heatIndex);
-}
-
-int IOTBOT::moduleDhtTempReadF(int pin) // Read Temperature in Fahrenheit
-{
-  initializeDht(pin, DHT11);                     // Ensure DHT11 is initialized
-  float temp = dhtSensor->readTemperature(true); // **Fahrenheit sıcaklık okuma**
-
-  if (isnan(temp)) // Check if reading failed
-    return -999;
-
-  return static_cast<int>(temp);
-}
-
-int IOTBOT::moduleDthFeelingTempF(int pin) // Calculate Heat Index (Feeling Temperature in Fahrenheit)
-{
-  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
-
-  float temp = dhtSensor->readTemperature(true); // **Fahrenheit sıcaklık okuma**
-  float hum = dhtSensor->readHumidity();         // **Nem okuma**
-
-  if (isnan(temp) || isnan(hum)) // Check if readings failed
-    return -999;
-
-  float heatIndex = dhtSensor->computeHeatIndex(temp, hum, true); // **Fahrenheit olarak hissedilen sıcaklık hesapla**
-  return static_cast<int>(heatIndex);
-}
-
-int IOTBOT::moduleDhtHumRead(int pin) // Read Humidity
-{
-  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
-  float hum = dhtSensor->readHumidity();
-
-  if (isnan(hum)) // Check if reading failed
-    return -999;
-
-  return static_cast<int>(hum);
-}
-#endif
-
 /*********************************** NTC Temp Sensor ***********************************
  * Reads the NTC temperature sensor value and calculates the temperature in Celsius.
  * pin: The analog pin where the NTC is connected.
@@ -1094,6 +977,218 @@ void IOTBOT::moduleTraficLightWriteGreen(bool green)
   }
 }
 
+/*********************************** Motion Sensor ***********************************
+ */
+bool IOTBOT::moduleMotionRead(int pin)
+{
+  // Configure pins
+  pinMode(pin, INPUT);
+  return digitalRead(pin);
+}
+
+/*********************************** Smoke Sensor ***********************************
+ */
+int IOTBOT::moduleSmokeRead(int pin)
+{
+  // Configure pins
+  pinMode(pin, INPUT);
+  return analogRead(pin);
+}
+
+/*********************************** Mic Sensor ***********************************
+ */
+int IOTBOT::moduleMicRead(int pin)
+{
+  // Configure pins
+  pinMode(pin, INPUT);
+  return analogRead(pin);
+}
+
+/*********************************** Soil Moisture Sensor ***********************************
+ */
+int IOTBOT::moduleSoilMoistureRead(int pin)
+{
+  // Configure pins
+  pinMode(pin, INPUT);
+  return analogRead(pin);
+}
+
+/*********************************** Relay Sensor ***********************************
+ */
+void IOTBOT::moduleRelayWrite(int pin, bool status)
+{
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, status);
+}
+
+/*********************************** OTHER PINS ***********************************
+ */
+int IOTBOT::analogReadPin(int pin)
+{
+  // Configure pins
+  pinMode(pin, INPUT);
+  return analogRead(pin);
+}
+
+void IOTBOT::analogWritePin(int pin, int value)
+{
+  pinMode(pin, OUTPUT);
+  // int pwmChannel = pin % 16;
+  // ledcAttachPin(pin, pwmChannel);
+  // ledcWrite(pwmChannel, value);
+  analogWrite(pin, value); // ESP8266 için normal PWM
+}
+
+bool IOTBOT::digitalReadPin(int pin)
+{
+  // Configure pins
+  pinMode(pin, INPUT);
+  return digitalRead(pin);
+}
+
+void IOTBOT::digitalWritePin(int pin, bool value)
+{
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, value);
+}
+
+/*********************************** EEPROM  ***********************************
+ */
+void IOTBOT::eepromWriteInt(int address, int value) // EEPROM'a güvenli bir şekilde int türünde veri yazmak için fonksiyon
+{
+  byte highByte = highByte(value); // int'in yüksek baytını al
+  byte lowByte = lowByte(value);   // int'in düşük baytını al
+
+  EEPROM.write(address, highByte);    // İlk baytı EEPROM'a yaz
+  EEPROM.write(address + 1, lowByte); // İkinci baytı EEPROM'a yaz
+  EEPROM.commit();                    // Değişiklikleri kaydetmek için commit işlemi yapılmalıdır
+}
+
+int IOTBOT::eepromReadInt(int address) // EEPROM'dan int türünde veri okumak için fonksiyon
+{
+  byte highByte = EEPROM.read(address);    // İlk baytı oku
+  byte lowByte = EEPROM.read(address + 1); // İkinci baytı oku
+  return word(highByte, lowByte);          // Yüksek ve düşük baytları birleştirerek int değeri oluştur
+}
+
+/*********************************** Servo Angle Control ***********************************
+ * Moves a servo to the specified angle with optional acceleration control.
+ * pin: The GPIO pin connected to the servo signal.
+ * angle: The target angle for the servo (0° to 180°).
+ * acceleration: The delay (in milliseconds) between incremental movements.
+ */
+#ifdef USE_SERVO // Eğer main.cpp içinde tanımlandıysa, burada aktif olur
+
+void IOTBOT::moduleServoGoAngle(int pin, int angle, int acceleration)
+{
+  // Ensure acceleration is valid
+  acceleration = max(acceleration, 1); // Minimum 1 ms gecikme
+
+  // Attach the servo to the specified pin if not already attached
+  if (!servoModule.attached())
+  {
+    servoModule.attach(pin, 1000, 2000); // Sadece bağlı değilse ata
+  }
+
+  // Ensure angle is within valid bounds (0 to 180 degrees)
+  angle = constrain(angle, 0, 180);
+
+  // Get the current position of the servo
+  // int currentAngle = servoModule.read(); // Read the current angle (0° to 180°)
+
+  // Determine movement direction (1 for increasing, -1 for decreasing)
+  int step = (angle > currentAngle) ? 1 : -1;
+
+  // Gradually move the servo to the target angle with acceleration
+  for (int pos = currentAngle; pos != angle; pos += step)
+  {
+    servoModule.write(pos); // Move servo to the next position
+    delay(acceleration);    // Delay for acceleration control
+  }
+  currentAngle = angle; // Read the current angle (0° to 180°)
+
+  // Ensure the final angle is set correctly
+  servoModule.write(angle);
+}
+#endif
+
+/*********************************** DHT Sensor Initialization ***********************************
+ * Configures the DHT sensor.
+ * This is automatically initialized when reading temperature or humidity.
+ */
+#if defined(USE_DHT)
+
+void IOTBOT::initializeDht(int pin, uint8_t type)
+{
+  if (!dhtSensor)
+  {
+    dhtSensor = new DHT(pin, type); // Create a new DHT object
+    dhtSensor->begin();             // Initialize the sensor
+  }
+}
+
+int IOTBOT::moduleDhtTempReadC(int pin) // Read Temperature
+{
+  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
+  float temp = dhtSensor->readTemperature();
+
+  if (isnan(temp)) // Check if reading failed
+    return -999;
+
+  return static_cast<int>(temp);
+}
+
+int IOTBOT::moduleDthFeelingTempC(int pin) // Calculate Heat Index (Feeling Temperature)
+{
+  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
+
+  float temp = dhtSensor->readTemperature();
+  float hum = dhtSensor->readHumidity();
+
+  if (isnan(temp) || isnan(hum)) // Check if readings failed
+    return -999;
+
+  float heatIndex = dhtSensor->computeHeatIndex(temp, hum, false); // Calculate heat index in Celsius
+  return static_cast<int>(heatIndex);
+}
+
+int IOTBOT::moduleDhtTempReadF(int pin) // Read Temperature in Fahrenheit
+{
+  initializeDht(pin, DHT11);                     // Ensure DHT11 is initialized
+  float temp = dhtSensor->readTemperature(true); // **Fahrenheit sıcaklık okuma**
+
+  if (isnan(temp)) // Check if reading failed
+    return -999;
+
+  return static_cast<int>(temp);
+}
+
+int IOTBOT::moduleDthFeelingTempF(int pin) // Calculate Heat Index (Feeling Temperature in Fahrenheit)
+{
+  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
+
+  float temp = dhtSensor->readTemperature(true); // **Fahrenheit sıcaklık okuma**
+  float hum = dhtSensor->readHumidity();         // **Nem okuma**
+
+  if (isnan(temp) || isnan(hum)) // Check if readings failed
+    return -999;
+
+  float heatIndex = dhtSensor->computeHeatIndex(temp, hum, true); // **Fahrenheit olarak hissedilen sıcaklık hesapla**
+  return static_cast<int>(heatIndex);
+}
+
+int IOTBOT::moduleDhtHumRead(int pin) // Read Humidity
+{
+  initializeDht(pin, DHT11); // Ensure DHT11 is initialized
+  float hum = dhtSensor->readHumidity();
+
+  if (isnan(hum)) // Check if reading failed
+    return -999;
+
+  return static_cast<int>(hum);
+}
+#endif
+
 /*********************************** Smart LED Sensor ***********************************
  */
 #if defined(USE_NEOPIXEL)
@@ -1214,41 +1309,43 @@ void IOTBOT::moduleSmartLEDColorWipeEffect(uint32_t color, int wait)
 }
 #endif
 
-/*********************************** Motion Sensor ***********************************
+/*********************************** RFID Sensor ***********************************
  */
-bool IOTBOT::moduleMotionRead(int pin)
+#if defined(USE_RFID)
+
+void IOTBOT::beginRFID()
 {
-  // Configure pins
-  pinMode(pin, INPUT);
-  return digitalRead(pin);
+  SPI.begin();            // SPI başlat
+  rfid.PCD_Init();        // RFID başlat
+  rfidInitialized = true; // RFID'nin başlatıldığını işaretle / Mark RFID as initialized
 }
 
-/*********************************** Smoke Sensor ***********************************
- */
-int IOTBOT::moduleSmokeRead(int pin)
+int IOTBOT::moduleRFIDRead()
 {
-  // Configure pins
-  pinMode(pin, INPUT);
-  return analogRead(pin);
-}
+  // Eğer RFID başlatılmadıysa, otomatik başlat / If RFID is not initialized, initialize it
+  if (!rfidInitialized)
+  {
+    beginRFID();
+  }
 
-/*********************************** Mic Sensor ***********************************
- */
-int IOTBOT::moduleMicRead(int pin)
-{
-  // Configure pins
-  pinMode(pin, INPUT);
-  return analogRead(pin);
-}
+  String rfidNum = "";
 
-/*********************************** Soil Moisture Sensor ***********************************
- */
-int IOTBOT::moduleSoilMoistureRead(int pin)
-{
-  // Configure pins
-  pinMode(pin, INPUT);
-  return analogRead(pin);
+  if (!rfid.PICC_IsNewCardPresent())
+    return 0;
+  if (!rfid.PICC_ReadCardSerial())
+    return 0;
+
+  for (byte i = 0; i < 4; i++)
+  {
+    rfidNum += String(rfid.uid.uidByte[i]);
+  }
+
+  rfid.PICC_HaltA();
+  rfid.PCD_StopCrypto1();
+
+  return rfidNum.toInt();
 }
+#endif
 
 /*********************************** IR Sensor ***********************************
  */
@@ -1301,102 +1398,6 @@ int IOTBOT::moduleIRReadDecimalx8(int pin) // Read IR signal as only the last 8 
   return 0; // No signal received / Sinyal yoksa 0 döndür
 }
 #endif
-
-/*********************************** Relay Sensor ***********************************
- */
-void IOTBOT::moduleRelayWrite(int pin, bool status)
-{
-  pinMode(pin, OUTPUT);
-  digitalWrite(pin, status);
-}
-
-/*********************************** RFID Sensor ***********************************
- */
-#if defined(USE_RFID)
-
-void IOTBOT::beginRFID()
-{
-  SPI.begin();            // SPI başlat
-  rfid.PCD_Init();        // RFID başlat
-  rfidInitialized = true; // RFID'nin başlatıldığını işaretle / Mark RFID as initialized
-}
-
-int IOTBOT::moduleRFIDRead()
-{
-  // Eğer RFID başlatılmadıysa, otomatik başlat / If RFID is not initialized, initialize it
-  if (!rfidInitialized)
-  {
-    beginRFID();
-  }
-
-  String rfidNum = "";
-
-  if (!rfid.PICC_IsNewCardPresent())
-    return 0;
-  if (!rfid.PICC_ReadCardSerial())
-    return 0;
-
-  for (byte i = 0; i < 4; i++)
-  {
-    rfidNum += String(rfid.uid.uidByte[i]);
-  }
-
-  rfid.PICC_HaltA();
-  rfid.PCD_StopCrypto1();
-
-  return rfidNum.toInt();
-}
-#endif
-
-/*********************************** OTHER PINS ***********************************
- */
-int IOTBOT::analogReadPin(int pin)
-{
-  // Configure pins
-  pinMode(pin, INPUT);
-  return analogRead(pin);
-}
-
-void IOTBOT::analogWritePin(int pin, int value)
-{
-  pinMode(pin, OUTPUT);
-  // int pwmChannel = pin % 16;
-  // ledcAttachPin(pin, pwmChannel);
-  // ledcWrite(pwmChannel, value);
-  analogWrite(pin, value); // ESP8266 için normal PWM
-}
-
-bool IOTBOT::digitalReadPin(int pin)
-{
-  // Configure pins
-  pinMode(pin, INPUT);
-  return digitalRead(pin);
-}
-
-void IOTBOT::digitalWritePin(int pin, bool value)
-{
-  pinMode(pin, OUTPUT);
-  digitalWrite(pin, value);
-}
-
-/*********************************** EEPROM  ***********************************
- */
-void IOTBOT::eepromWriteInt(int address, int value) // EEPROM'a güvenli bir şekilde int türünde veri yazmak için fonksiyon
-{
-  byte highByte = highByte(value); // int'in yüksek baytını al
-  byte lowByte = lowByte(value);   // int'in düşük baytını al
-
-  EEPROM.write(address, highByte);    // İlk baytı EEPROM'a yaz
-  EEPROM.write(address + 1, lowByte); // İkinci baytı EEPROM'a yaz
-  EEPROM.commit();                    // Değişiklikleri kaydetmek için commit işlemi yapılmalıdır
-}
-
-int IOTBOT::eepromReadInt(int address) // EEPROM'dan int türünde veri okumak için fonksiyon
-{
-  byte highByte = EEPROM.read(address);    // İlk baytı oku
-  byte lowByte = EEPROM.read(address + 1); // İkinci baytı oku
-  return word(highByte, lowByte);          // Yüksek ve düşük baytları birleştirerek int değeri oluştur
-}
 
 /*********************************** WiFi ***********************************/
 #if defined(USE_WIFI)
